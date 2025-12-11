@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model LoginHistory {
+  id        String   @id
+  userId    String
+  loginAt   DateTime @default(now())
+  ipAddress String?
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model ResumeLog {
+  id           String   @id
+  createdAt    DateTime @default(now())
+  jobTitle     String?
+  companyName  String?
+  matchScore   Int?
+  originalName String?
+  userEmail    String?
+  userId       String?
+  status       String   @default("SUCCESS")
+  user         User?    @relation(fields: [userId], references: [id])
+}
+
+model SystemActivity {
+  id        String   @id
+  userId    String
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id             String           @id
+  email          String           @unique
+  password       String
+  name           String?
+  phone          String?
+  status         String           @default("PENDING")
+  createdAt      DateTime         @default(now())
+  LoginHistory   LoginHistory[]
+  ResumeLog      ResumeLog[]
+  SystemActivity SystemActivity[]
+}
