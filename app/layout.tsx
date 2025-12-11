@@ -10,15 +10,26 @@ export const metadata: Metadata = {
     description: "AI-Powered Resume Tailoring Platform",
 };
 
+import { ThemeProvider } from "@/components/ThemeProvider";
+
+// ...
+
 export default function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className="dark">
-            <body className={inter.className}>
-                <AuthProvider>{children}</AuthProvider>
+        <html lang="en" suppressHydrationWarning>
+            <body className={`${inter.className} min-h-screen bg-grid-pattern`}>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="dark"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <AuthProvider>{children}</AuthProvider>
+                </ThemeProvider>
             </body>
         </html>
     );

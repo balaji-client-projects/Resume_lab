@@ -8,7 +8,7 @@ datasource db {
 }
 
 model LoginHistory {
-  id        String   @id
+  id        String   @id @default(cuid())
   userId    String
   loginAt   DateTime @default(now())
   ipAddress String?
@@ -16,7 +16,7 @@ model LoginHistory {
 }
 
 model ResumeLog {
-  id           String   @id
+  id           String   @id @default(cuid())
   createdAt    DateTime @default(now())
   jobTitle     String?
   companyName  String?
@@ -29,7 +29,7 @@ model ResumeLog {
 }
 
 model SystemActivity {
-  id        String   @id
+  id        String   @id @default(cuid())
   userId    String
   action    String
   details   String?
@@ -38,7 +38,7 @@ model SystemActivity {
 }
 
 model User {
-  id             String           @id
+  id             String           @id @default(cuid())
   email          String           @unique
   password       String
   name           String?

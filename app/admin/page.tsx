@@ -1,9 +1,10 @@
-import { prisma } from "@/app/lib/prisma"; // Direct DB access for Admin (Server Component)
-import { FileText, Users, BarChart3, CheckCircle, XCircle } from "lucide-react";
+import { prisma } from "@/app/lib/prisma";
+import { FileText, Users, BarChart3, CheckCircle, XCircle, LogOut, Sun, Moon } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import UserActions from "./UserActions";
 import { logoutAction } from "../actions/auth";
+import { AdminThemeToggle } from "./AdminThemeToggle";
 
 // Force dynamic rendering so it always shows latest data
 export const dynamic = 'force-dynamic';
@@ -19,7 +20,7 @@ export default async function AdminDashboard() {
 
     // 1. Fetch Stats
     const totalResumes = await prisma.resumeLog.count();
-    const totalUsers = await prisma.user.count(); // Count Registered Users
+    const totalUsers = await prisma.user.count();
 
     const avgScoreAgg = await prisma.resumeLog.aggregate({
         _avg: { matchScore: true }
@@ -46,95 +47,109 @@ export default async function AdminDashboard() {
     });
 
     return (
-        <div className="min-h-screen bg-neutral-950 text-white p-8">
-            <div className="max-w-7xl mx-auto">
-                <div className="flex justify-between items-center mb-10">
+        <div className="min-h-screen bg-background text-foreground p-6 md:p-8">
+            {/* Background Pattern */}
+            <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+                <div className="bg-grid opacity-20"></div>
+                <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/5 blur-3xl rounded-full animate-pulse-glow"></div>
+                <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-accent/5 blur-3xl rounded-full animate-pulse-glow" style={{ animationDelay: "1s" }}></div>
+            </div>
+
+            <div className="max-w-7xl mx-auto space-y-8">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">
-                            Master Admin Dashboard
+                        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">
+                            Admin Dashboard
                         </h1>
-                        <p className="text-slate-400 mt-2">Monitor registered clients and system usage</p>
+                        <p className="text-muted-foreground text-lg">Monitor registered clients and system usage</p>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <div className="bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-full text-indigo-300 text-sm">
-                            Live System Status: 🟢 Online
+                    <div className="flex items-center gap-3">
+                        <div className="status-badge success flex items-center gap-2">
+                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                            System Online
                         </div>
+                        <AdminThemeToggle />
                         <form action={logoutAction}>
-                            <button type="submit" className="px-4 py-2 bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-colors font-medium text-sm">
+                            <button type="submit" className="btn btn-ghost text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 gap-2">
+                                <LogOut className="w-4 h-4" />
                                 Sign Out
                             </button>
                         </form>
                     </div>
                 </div>
 
-                {/* --- STATS GRID --- */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Stat 1 */}
-                    <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-sm">
+                    <div className="card p-6 card-hover">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-blue-500/20 rounded-xl text-blue-400">
-                                <FileText className="w-6 h-6" />
+                            <div className="w-14 h-14 bg-blue-500/20 dark:bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                <FileText className="w-7 h-7" />
                             </div>
-                            <h3 className="text-slate-400 font-medium">Total Resumes</h3>
+                            <h3 className="text-muted-foreground font-semibold">Total Resumes</h3>
                         </div>
-                        <p className="text-4xl font-bold text-white">{totalResumes}</p>
+                        <p className="text-5xl font-bold text-foreground">{totalResumes}</p>
                     </div>
 
                     {/* Stat 2 */}
-                    <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-sm">
+                    <div className="card p-6 card-hover">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-green-500/20 rounded-xl text-green-400">
-                                <BarChart3 className="w-6 h-6" />
+                            <div className="w-14 h-14 bg-green-500/20 dark:bg-green-500/10 rounded-xl flex items-center justify-center text-green-600 dark:text-green-400">
+                                <BarChart3 className="w-7 h-7" />
                             </div>
-                            <h3 className="text-slate-400 font-medium">Average ATS Score</h3>
+                            <h3 className="text-muted-foreground font-semibold">Avg ATS Score</h3>
                         </div>
-                        <p className="text-4xl font-bold text-white">{avgScore}%</p>
+                        <p className="text-5xl font-bold text-foreground">{avgScore}%</p>
                     </div>
 
                     {/* Stat 3 */}
-                    <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-sm">
+                    <div className="card p-6 card-hover">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-purple-500/20 rounded-xl text-purple-400">
-                                <Users className="w-6 h-6" />
+                            <div className="w-14 h-14 bg-purple-500/20 dark:bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400">
+                                <Users className="w-7 h-7" />
                             </div>
-                            <h3 className="text-slate-400 font-medium">Registered Users</h3>
+                            <h3 className="text-muted-foreground font-semibold">Registered Users</h3>
                         </div>
-                        <p className="text-4xl font-bold text-white">{totalUsers}</p>
-                        <p className="text-xs text-slate-500 mt-1">Total Verified Clients</p>
+                        <p className="text-5xl font-bold text-foreground">{totalUsers}</p>
+                        <p className="text-xs text-muted-foreground mt-2">Total Verified Clients</p>
                     </div>
                 </div>
 
-                {/* --- SECTIONS GRID --- */}
-                <div className="space-y-10">
+                {/* Data Tables */}
+                <div className="space-y-8">
 
                     {/* SECTION 1: REGISTERED CLIENTS */}
-                    <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm">
-                        <div className="p-6 border-b border-white/10 flex justify-between items-center">
-                            <h2 className="text-xl font-semibold text-indigo-300">👥 Registered Clients</h2>
-                            <span className="text-xs text-slate-500 uppercase tracking-wider">Latest 50</span>
+                    <div className="card overflow-hidden">
+                        <div className="p-6 border-b border-border flex justify-between items-center bg-muted/30">
+                            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                                <Users className="w-6 h-6 text-primary" />
+                                Registered Clients
+                            </h2>
+                            <span className="status-badge info">Latest 50</span>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead className="bg-black/20 text-slate-400">
+                            <table className="data-table">
+                                <thead>
                                     <tr>
-                                        <th className="p-6 font-medium text-sm">Joined Date</th>
-                                        <th className="p-6 font-medium text-sm">Name</th>
-                                        <th className="p-6 font-medium text-sm">Email</th>
-                                        <th className="p-6 font-medium text-sm">Action</th>
+                                        <th>Joined Date</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-white/5">
+                                <tbody>
                                     {users.length === 0 ? (
-                                        <tr><td colSpan={4} className="p-8 text-center text-slate-500">No users registered yet.</td></tr>
+                                        <tr><td colSpan={4} className="text-center text-muted-foreground py-12">No users registered yet.</td></tr>
                                     ) : users.map(user => (
-                                        <tr key={user.id} className="hover:bg-white/5">
-                                            <td className="p-6 text-slate-400">{new Date(user.createdAt).toLocaleDateString()}</td>
-                                            <td className="p-6 text-white font-bold">
+                                        <tr key={user.id}>
+                                            <td className="text-muted-foreground font-medium">{new Date(user.createdAt).toLocaleDateString()}</td>
+                                            <td className="font-bold">
                                                 {user.name || "N/A"}<br />
-                                                <span className="text-xs font-normal text-slate-500">{user.phone}</span>
+                                                <span className="text-xs font-normal text-muted-foreground">{user.phone}</span>
                                             </td>
-                                            <td className="p-6 text-blue-400">{user.email}</td>
-                                            <td className="p-6">
+                                            <td className="text-primary font-medium">{user.email}</td>
+                                            <td>
                                                 <UserActions userId={user.id} status={user.status} />
                                             </td>
                                         </tr>
@@ -145,54 +160,57 @@ export default async function AdminDashboard() {
                     </div>
 
                     {/* SECTION 2: RESUME GENERATION LOGS */}
-                    <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm">
-                        <div className="p-6 border-b border-white/10 flex justify-between items-center">
-                            <h2 className="text-xl font-semibold text-cyan-300">📄 Resume Generations</h2>
-                            <span className="text-xs text-slate-500 uppercase tracking-wider">Real-time Activity</span>
+                    <div className="card overflow-hidden">
+                        <div className="p-6 border-b border-border flex justify-between items-center bg-muted/30">
+                            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                                <FileText className="w-6 h-6 text-accent" />
+                                Resume Generations
+                            </h2>
+                            <span className="status-badge success">Real-time Activity</span>
                         </div>
 
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead className="bg-black/20 text-slate-400">
+                            <table className="data-table">
+                                <thead>
                                     <tr>
-                                        <th className="p-6 font-medium text-sm">Date & Time</th>
-                                        <th className="p-6 font-medium text-sm">User / Email</th>
-                                        <th className="p-6 font-medium text-sm">File Name</th>
-                                        <th className="p-6 font-medium text-sm">Match Score</th>
-                                        <th className="p-6 font-medium text-sm">Status</th>
+                                        <th>Date & Time</th>
+                                        <th>User / Email</th>
+                                        <th>File Name</th>
+                                        <th>Match Score</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-white/5">
+                                <tbody>
                                     {logs.length === 0 ? (
                                         <tr>
-                                            <td colSpan={5} className="p-8 text-center text-slate-500">
+                                            <td colSpan={5} className="text-center text-muted-foreground py-12">
                                                 No activity recorded yet.
                                             </td>
                                         </tr>
                                     ) : logs.map((log) => (
-                                        <tr key={log.id} className="hover:bg-white/5 transition-colors">
-                                            <td className="p-6 text-slate-300">
+                                        <tr key={log.id}>
+                                            <td className="text-muted-foreground font-medium">
                                                 {new Date(log.createdAt).toLocaleString()}
                                             </td>
-                                            <td className="p-6 text-white font-medium">
+                                            <td className="font-semibold">
                                                 {log.userEmail || "Anonymous"}
                                             </td>
-                                            <td className="p-6 text-slate-300">{log.originalName}</td>
-                                            <td className="p-6">
-                                                <span className={`px-3 py-1 rounded-full text-xs font-bold ${(log.matchScore || 0) >= 70 ? 'bg-green-500/20 text-green-300' :
-                                                    (log.matchScore || 0) >= 50 ? 'bg-yellow-500/20 text-yellow-300' :
-                                                        'bg-red-500/20 text-red-300'
+                                            <td className="text-muted-foreground">{log.originalName}</td>
+                                            <td>
+                                                <span className={`status-badge ${(log.matchScore || 0) >= 90 ? 'success' :
+                                                    (log.matchScore || 0) >= 75 ? 'warning' :
+                                                        'error'
                                                     }`}>
                                                     {log.matchScore || 0}%
                                                 </span>
                                             </td>
-                                            <td className="p-6">
+                                            <td>
                                                 {log.status === 'SUCCESS' ? (
-                                                    <div className="flex items-center gap-2 text-green-400 text-sm">
+                                                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400 text-sm font-semibold">
                                                         <CheckCircle className="w-4 h-4" /> Success
                                                     </div>
                                                 ) : (
-                                                    <div className="flex items-center gap-2 text-red-400 text-sm">
+                                                    <div className="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm font-semibold">
                                                         <XCircle className="w-4 h-4" /> Failed
                                                     </div>
                                                 )}
@@ -205,28 +223,31 @@ export default async function AdminDashboard() {
                     </div>
 
                     {/* SECTION 3: RECENT LOGINS */}
-                    <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm">
-                        <div className="p-6 border-b border-white/10 flex justify-between items-center">
-                            <h2 className="text-xl font-semibold text-purple-300">🔐 Recent Logins</h2>
-                            <span className="text-xs text-slate-500 uppercase tracking-wider">Access Logs</span>
+                    <div className="card overflow-hidden">
+                        <div className="p-6 border-b border-border flex justify-between items-center bg-muted/30">
+                            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                                <span className="text-2xl">🔐</span>
+                                Recent Logins
+                            </h2>
+                            <span className="status-badge info">Access Logs</span>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead className="bg-black/20 text-slate-400">
+                            <table className="data-table">
+                                <thead>
                                     <tr>
-                                        <th className="p-6 font-medium text-sm">Login Time</th>
-                                        <th className="p-6 font-medium text-sm">User</th>
-                                        <th className="p-6 font-medium text-sm">IP Address</th>
+                                        <th>Login Time</th>
+                                        <th>User</th>
+                                        <th>IP Address</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-white/5">
+                                <tbody>
                                     {logins.length === 0 ? (
-                                        <tr><td colSpan={3} className="p-8 text-center text-slate-500">No login history found.</td></tr>
+                                        <tr><td colSpan={3} className="text-center text-muted-foreground py-12">No login history found.</td></tr>
                                     ) : logins.map(login => (
-                                        <tr key={login.id} className="hover:bg-white/5">
-                                            <td className="p-6 text-slate-300">{new Date(login.loginAt).toLocaleString()}</td>
-                                            <td className="p-6 text-white">{login.user.email}</td>
-                                            <td className="p-6 text-slate-500 font-mono text-xs">{login.ipAddress || "Unknown"}</td>
+                                        <tr key={login.id}>
+                                            <td className="text-muted-foreground font-medium">{new Date(login.loginAt).toLocaleString()}</td>
+                                            <td className="font-semibold">{login.user.email}</td>
+                                            <td className="text-muted-foreground font-mono text-xs">{login.ipAddress || "Unknown"}</td>
                                         </tr>
                                     ))}
                                 </tbody>

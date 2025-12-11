@@ -9,7 +9,7 @@ export default function UserActions({ userId, status }: { userId: string, status
     const router = useRouter();
 
     const handleAction = async (action: "APPROVE" | "REJECT") => {
-        if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+        if (!confirm(`Are you sure you want to ${action.toLowerCase()} this user?`)) return;
 
         setLoading(true);
         try {
@@ -18,7 +18,7 @@ export default function UserActions({ userId, status }: { userId: string, status
                 body: JSON.stringify({ userId, action }),
                 headers: { "Content-Type": "application/json" }
             });
-            router.refresh(); // Reloads page data
+            router.refresh();
         } catch (e) {
             alert("Failed to update user");
         } finally {
@@ -27,11 +27,11 @@ export default function UserActions({ userId, status }: { userId: string, status
     };
 
     if (status === "ACTIVE") {
-        return <span className="text-green-400 text-xs font-bold border border-green-500/30 px-2 py-1 rounded">ACTIVE</span>;
+        return <span className="status-badge success">ACTIVE</span>;
     }
 
     if (status === "REJECTED") {
-        return <span className="text-red-400 text-xs font-bold border border-red-500/30 px-2 py-1 rounded">REJECTED</span>;
+        return <span className="status-badge error">REJECTED</span>;
     }
 
     return (
@@ -39,7 +39,7 @@ export default function UserActions({ userId, status }: { userId: string, status
             <button
                 onClick={() => handleAction("APPROVE")}
                 disabled={loading}
-                className="p-1 bg-green-500/20 text-green-400 rounded hover:bg-green-500/40 transition disabled:opacity-50"
+                className="p-2 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-500/30 transition disabled:opacity-50 border border-green-200 dark:border-green-500/20"
                 title="Approve User"
             >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
@@ -47,7 +47,7 @@ export default function UserActions({ userId, status }: { userId: string, status
             <button
                 onClick={() => handleAction("REJECT")}
                 disabled={loading}
-                className="p-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/40 transition disabled:opacity-50"
+                className="p-2 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-500/30 transition disabled:opacity-50 border border-red-200 dark:border-red-500/20"
                 title="Reject User"
             >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}

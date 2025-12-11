@@ -2,49 +2,482 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 5, 5, 5;
-    --background-end-rgb: 5, 5, 5;
+@layer base {
+  :root {
+    /* ========================================================================
+       LIGHT MODE - Professional Blue/Slate Enterprise Theme
+       ======================================================================== */
+
+    /* Primary Brand - Royal Blue */
+    --primary: 37 99 235;
+    /* #2563EB */
+    --primary-light: 59 130 246;
+    /* #3B82F6 */
+    --primary-dark: 29 78 216;
+    /* #1D4ED8 */
+    --primary-foreground: 255 255 255;
+
+    /* Secondary - Teal/Cyan for accents */
+    --secondary: 20 184 166;
+    /* #14B8A6 - Teal */
+    --secondary-foreground: 255 255 255;
+
+    /* Accent - Sky Blue */
+    --accent: 14 165 233;
+    /* #0EA5E9 */
+    --accent-foreground: 255 255 255;
+
+    /* Backgrounds & Surfaces */
+    --background: 249 250 251;
+    /* #F9FAFB - Very Light Gray */
+    --foreground: 17 24 39;
+    /* #111827 - Almost Black */
+
+    --card: 255 255 255;
+    /* Pure White */
+    --card-foreground: 17 24 39;
+
+    --popover: 255 255 255;
+    --popover-foreground: 17 24 39;
+
+    --muted: 243 244 246;
+    /* #F3F4F6 - Gray 100 */
+    --muted-foreground: 107 114 128;
+    /* #6B7280 - Gray 500 */
+
+    /* Borders & Dividers */
+    --border: 229 231 235;
+    /* #E5E7EB - Gray 200 */
+    --input: 229 231 235;
+    --ring: 37 99 235;
+    /* Primary */
+
+    /* Status Colors */
+    --status-success: 34 197 94;
+    /* Green-500 */
+    --status-warning: 251 191 36;
+    /* Amber-400 */
+    --status-error: 239 68 68;
+    /* Red-500 */
+    --status-info: 59 130 246;
+    /* Blue-500 */
+
+    /* Job-specific statuses */
+    --status-pending: 251 191 36;
+    --status-progress: 59 130 246;
+    --status-blocked: 239 68 68;
+  }
+
+  .dark {
+    /* ========================================================================
+       DARK MODE - Deep Slate Professional Theme
+       ======================================================================== */
+
+    /* Primary - Brighter for contrast */
+    --primary: 96 165 250;
+    /* #60A5FA */
+    --primary-light: 147 197 253;
+    --primary-dark: 59 130 246;
+    --primary-foreground: 17 24 39;
+
+    /* Secondary */
+    --secondary: 45 212 191;
+    /* #2DD4BF - Teal-400 */
+    --secondary-foreground: 17 24 39;
+
+    /* Accent */
+    --accent: 56 189 248;
+    /* #38BDF8 */
+    --accent-foreground: 17 24 39;
+
+    /* Backgrounds */
+    --background: 17 24 39;
+    /* #111827 - Gray-900 */
+    --foreground: 249 250 251;
+    /* #F9FAFB */
+
+    --card: 31 41 55;
+    /* #1F2937 - Gray-800 */
+    --card-foreground: 249 250 251;
+
+    --popover: 31 41 55;
+    --popover-foreground: 249 250 251;
+
+    --muted: 55 65 81;
+    /* #374151 - Gray-700 */
+    --muted-foreground: 156 163 175;
+    /* #9CA3AF - Gray-400 */
+
+    /* Borders */
+    --border: 55 65 81;
+    /* #374151 */
+    --input: 55 65 81;
+    --ring: 96 165 250;
+
+    /* Status Colors (Lighter for visibility) */
+    --status-success: 74 222 128;
+    --status-warning: 251 191 36;
+    --status-error: 248 113 113;
+    --status-info: 96 165 250;
+
+    --status-pending: 251 191 36;
+    --status-progress: 96 165 250;
+    --status-blocked: 248 113 113;
+  }
+
+  /* Global Typography & Body */
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight text-foreground;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl;
+  }
 }
 
-body {
-    color: rgb(var(--foreground-rgb));
-    background: black;
+@layer components {
+
+  /* ========================================================================
+     BUTTONS
+     ======================================================================== */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98];
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground shadow-lg shadow-secondary/20 hover:bg-secondary/90 hover:-translate-y-0.5;
+  }
+
+  .btn-outline {
+    @apply border-2 border-border bg-transparent hover:bg-muted hover:border-primary/50;
+  }
+
+  .btn-ghost {
+    @apply hover:bg-muted hover:text-foreground;
+  }
+
+  .btn-danger {
+    background-color: rgb(var(--status-error));
+    @apply text-white shadow-lg shadow-red-500/25 hover:bg-red-600 hover:-translate-y-0.5;
+  }
+
+  /* ========================================================================
+     CARDS
+     ======================================================================== */
+  .card {
+    @apply rounded-2xl border border-border bg-card text-card-foreground shadow-sm backdrop-blur-sm transition-all duration-300;
+  }
+
+  .card-header {
+    @apply flex flex-col space-y-1.5 p-6;
+  }
+
+  .card-title {
+    @apply text-2xl font-semibold leading-none tracking-tight;
+  }
+
+  .card-description {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .card-content {
+    @apply p-6 pt-0;
+  }
+
+  .card-hover {
+    @apply hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 hover:border-primary/30 cursor-pointer;
+  }
+
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-xl border-white/10 shadow-2xl;
+  }
+
+  /* ========================================================================
+     FORMS
+     ======================================================================== */
+  .form-input,
+  .form-textarea,
+  .form-select {
+    @apply w-full rounded-lg border border-input bg-background px-4 py-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200;
+  }
+
+  .form-label {
+    @apply text-sm font-semibold leading-none text-foreground mb-2 block;
+  }
+
+  /* ========================================================================
+     TABLES
+     ======================================================================== */
+  .data-table-container {
+    @apply w-full overflow-auto rounded-2xl border border-border bg-card shadow-sm;
+  }
+
+  .data-table {
+    @apply w-full caption-bottom text-sm;
+  }
+
+  .data-table thead {
+    @apply bg-muted/50;
+  }
+
+  .data-table thead tr {
+    @apply border-b border-border;
+  }
+
+  .data-table th {
+    @apply h-12 px-6 text-left align-middle font-semibold text-muted-foreground uppercase text-xs tracking-wider;
+  }
+
+  .data-table tbody tr {
+    @apply border-b border-border transition-colors hover:bg-muted/30;
+  }
+
+  .data-table td {
+    @apply p-6 align-middle;
+  }
+
+  /* ========================================================================
+     STATUS INDICATORS
+     ======================================================================== */
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold border shadow-sm transition-all;
+  }
+
+  .status-badge.success {
+    @apply bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/20;
+  }
+
+  .status-badge.warning {
+    @apply bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/20;
+  }
+
+  .status-badge.error {
+    @apply bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/20;
+  }
+
+  .status-badge.info {
+    @apply bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20;
+  }
+
+  .status-badge.pending {
+    @apply bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/20;
+  }
+
+  .status-badge.progress {
+    @apply bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20;
+  }
+
+  /* ========================================================================
+     JOB CARDS
+     ======================================================================== */
+  .job-card {
+    @apply card relative overflow-hidden border-l-4 border-l-transparent hover:border-l-primary transition-all duration-300;
+  }
+
+  .job-card.status-success {
+    @apply border-l-green-500;
+  }
+
+  .job-card.status-pending {
+    @apply border-l-amber-500;
+  }
+
+  .job-card.status-progress {
+    @apply border-l-blue-500;
+  }
+
+  .job-card.status-blocked {
+    @apply border-l-red-500;
+  }
 }
 
 @layer utilities {
-    .text-balance {
-        text-wrap: balance;
-    }
 
-    .animate-fade-in {
-        animation: fadeIn 0.5s ease-in-out;
-    }
+  /* Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-    .animate-fade-in-up {
-        animation: fadeInUp 0.6s ease-out;
-    }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-pulse-glow {
+    animation: pulseGlow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Background Grid Pattern */
+  .bg-grid {
+    background-size: 40px 40px;
+    background-image:
+      linear-gradient(to right, rgb(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--border) / 0.3) 1px, transparent 1px);
+  }
+
+  /* Gradient Backgrounds */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, rgb(var(--primary)), rgb(var(--accent)));
+  }
+
+  .bg-gradient-mesh {
+    background:
+      radial-gradient(at 0% 0%, rgb(var(--primary) / 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgb(var(--accent) / 0.15) 0px, transparent 50%);
+  }
+
+  /* Scrollbar Styling */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--muted-foreground) / 0.3);
+    border-radius: 20px;
+    transition: background-color 0.2s;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--muted-foreground) / 0.5);
+  }
 }
 
+/* ========================================================================
+   KEYFRAME ANIMATIONS
+   ======================================================================== */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
+  from {
+    opacity: 0;
+  }
 
-    to {
-        opacity: 1;
-    }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgb(var(--primary) / 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgb(var(--primary) / 0.4);
+  }
+}
+
+/* ========================================================================
+   HERO SECTION SPECIFIC
+   ======================================================================== */
+.hero-gradient {
+  background:
+    radial-gradient(circle at top left, rgb(var(--primary) / 0.1) 0%, transparent 50%),
+    radial-gradient(circle at bottom right, rgb(var(--accent) / 0.1) 0%, transparent 50%);
+}
+
+/* ========================================================================
+   GLASS MORPHISM EFFECTS
+   ======================================================================== */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass {
+  background: rgba(31, 41, 55, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================================================
+   ADDITIONAL ANIMATIONS
+   ======================================================================== */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  25% {
+    transform: translateY(-20px) translateX(10px);
+  }
+
+  50% {
+    transform: translateY(-40px) translateX(-10px);
+  }
+
+  75% {
+    transform: translateY(-20px) translateX(5px);
+  }
+}
+
+@keyframes bounce-slow {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s ease-in-out infinite;
 }

@@ -6,17 +6,18 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-indigo-500/30">
-            {/* Background Gradients (Global for Dashboard) */}
-            <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-20%] left-[20%] w-[30%] h-[30%] bg-indigo-900/20 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[0%] right-[0%] w-[40%] h-[40%] bg-purple-900/10 blur-[120px] rounded-full" />
+        <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
+            {/* Background Elements */}
+            <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+                <div className="bg-grid opacity-30"></div>
+                <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 blur-3xl rounded-full animate-pulse-glow"></div>
+                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/5 blur-3xl rounded-full animate-pulse-glow" style={{ animationDelay: "1s" }}></div>
             </div>
 
             <Sidebar />
 
-            <main className="relative z-10 pl-64 transition-all duration-300">
-                <div className="max-w-7xl mx-auto p-8">
+            <main className="relative z-10 ml-64 transition-all duration-300">
+                <div className="max-w-7xl mx-auto">
                     {children}
                 </div>
             </main>

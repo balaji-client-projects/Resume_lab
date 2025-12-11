@@ -86,17 +86,17 @@ export default function HistoryPage() {
         }
     };
 
-    const getActionColor = (action: string, status: string) => {
-        if (status === "failed") return "bg-red-500/10 text-red-400 border-red-500/20";
+    const getActionBadgeClass = (action: string, status: string) => {
+        if (status === "failed") return "status-badge error";
         switch (action) {
             case "generated":
-                return "bg-green-500/10 text-green-400 border-green-500/20";
+                return "status-badge success";
             case "downloaded":
-                return "bg-blue-500/10 text-blue-400 border-blue-500/20";
+                return "status-badge info";
             case "deleted":
-                return "bg-orange-500/10 text-orange-400 border-orange-500/20";
+                return "status-badge warning";
             default:
-                return "bg-slate-500/10 text-slate-400 border-slate-500/20";
+                return "status-badge";
         }
     };
 
@@ -115,49 +115,47 @@ export default function HistoryPage() {
     };
 
     return (
-        <div className="space-y-8 animate-fade-in">
+        <div className="p-6 space-y-8 animate-fade-in">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-white mb-1">History</h1>
-                    <p className="text-slate-400">View your recent activity and resume generations</p>
-                </div>
+            <div>
+                <h1 className="text-4xl font-bold tracking-tight text-foreground mb-2">History</h1>
+                <p className="text-muted-foreground text-lg">View your recent activity and resume generations</p>
             </div>
 
             {/* Filters */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
                 <button
                     onClick={() => setFilter("all")}
-                    className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${filter === "all"
-                            ? "bg-indigo-600 text-white"
-                            : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
+                    className={`px-5 py-2.5 text-sm font-semibold rounded-xl transition-all ${filter === "all"
+                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                        : "btn btn-ghost"
                         }`}
                 >
                     All
                 </button>
                 <button
                     onClick={() => setFilter("generated")}
-                    className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${filter === "generated"
-                            ? "bg-indigo-600 text-white"
-                            : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
+                    className={`px-5 py-2.5 text-sm font-semibold rounded-xl transition-all ${filter === "generated"
+                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                        : "btn btn-ghost"
                         }`}
                 >
                     Generated
                 </button>
                 <button
                     onClick={() => setFilter("downloaded")}
-                    className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${filter === "downloaded"
-                            ? "bg-indigo-600 text-white"
-                            : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
+                    className={`px-5 py-2.5 text-sm font-semibold rounded-xl transition-all ${filter === "downloaded"
+                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                        : "btn btn-ghost"
                         }`}
                 >
                     Downloaded
                 </button>
                 <button
                     onClick={() => setFilter("deleted")}
-                    className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${filter === "deleted"
-                            ? "bg-indigo-600 text-white"
-                            : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
+                    className={`px-5 py-2.5 text-sm font-semibold rounded-xl transition-all ${filter === "deleted"
+                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                        : "btn btn-ghost"
                         }`}
                 >
                     Deleted
@@ -166,42 +164,37 @@ export default function HistoryPage() {
 
             {/* Timeline */}
             <div className="space-y-4">
-                {filteredHistory.map((item, index) => (
+                {filteredHistory.map((item) => (
                     <div
                         key={item.id}
-                        className="flex gap-4 p-5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm hover:bg-white/[0.07] transition-all group"
+                        className="card p-6 card-hover group flex gap-5"
                     >
                         {/* Icon */}
-                        <div
-                            className={`flex-shrink-0 w-12 h-12 rounded-xl border flex items-center justify-center ${getActionColor(
-                                item.action,
-                                item.status
-                            )}`}
-                        >
+                        <div className={`flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center ${getActionBadgeClass(item.action, item.status)}`}>
                             {item.status === "success" ? (
                                 getActionIcon(item.action)
                             ) : (
-                                <AlertCircle className="w-5 h-5" />
+                                <AlertCircle className="w-6 h-6" />
                             )}
                         </div>
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between mb-1">
-                                <h3 className="font-semibold text-white group-hover:text-indigo-400 transition-colors">
+                            <div className="flex items-start justify-between mb-2">
+                                <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
                                     {item.title}
                                 </h3>
-                                <div className="flex items-center gap-2 text-xs text-slate-500">
-                                    <Clock className="w-3.5 h-3.5" />
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                                    <Clock className="w-4 h-4" />
                                     {formatTime(item.timestamp)}
                                 </div>
                             </div>
-                            <p className="text-sm text-slate-400 mb-2">{item.description}</p>
+                            <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
 
                             {/* Match Score Badge */}
                             {item.matchScore && (
-                                <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full text-xs text-green-400 font-medium">
-                                    <CheckCircle className="w-3.5 h-3.5" />
+                                <div className="status-badge success inline-flex items-center gap-2">
+                                    <CheckCircle className="w-4 h-4" />
                                     {item.matchScore}% Match
                                 </div>
                             )}
@@ -213,11 +206,11 @@ export default function HistoryPage() {
             {/* Empty State */}
             {filteredHistory.length === 0 && (
                 <div className="py-20 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/5 border border-white/10 rounded-full mb-4">
-                        <Clock className="w-8 h-8 text-slate-400" />
+                    <div className="inline-flex items-center justify-center w-20 h-20 bg-muted rounded-full mb-6">
+                        <Clock className="w-10 h-10 text-muted-foreground" />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">No history found</h3>
-                    <p className="text-slate-400">Your activity will appear here</p>
+                    <h3 className="text-2xl font-bold text-foreground mb-3">No history found</h3>
+                    <p className="text-muted-foreground text-lg">Your activity will appear here</p>
                 </div>
             )}
         </div>
