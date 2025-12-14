@@ -20,7 +20,7 @@ export async function POST(req: Request) {
             data: {
                 name,
                 email,
-                phone,
+                ...(phone && { phone }), // Only include phone if provided
                 password // ⚠️ Note: Should hash in production!
             }
         });
