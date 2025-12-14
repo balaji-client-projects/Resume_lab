@@ -192,10 +192,10 @@ Remember: Write natural, professional content without any markdown or special fo
             // Feed the AI data into the document
             doc.render(analysis.replacements || {});
 
-            outputBuffer = doc.getZip().generate({
+            outputBuffer = Buffer.from(doc.getZip().generate({
                 type: "nodebuffer",
                 compression: "DEFLATE",
-            }) as any as Buffer;
+            }) as any);
             console.log("✅ DOCX Updated Successfully!");
         } catch (docxError: any) {
             console.error("❌ Docxtemplater Error:", docxError);
