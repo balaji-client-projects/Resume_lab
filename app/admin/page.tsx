@@ -19,34 +19,38 @@ export default async function AdminDashboard() {
         redirect("/admin/login");
     }
 
-    // 1. Fetch Stats
-    const totalResumes = await prisma.resumeLog.count();
-    const totalUsers = await prisma.user.count();
+    // Fetch all data in parallel for better performance
+    const [
+        totalResumes,
+        totalUsers,
+        avgScoreAgg,
+        logs,
+        users,
+        totalFeedback,
+        feedbackList
+    ] = await Promise.all([
+        prisma.resumeLog.count(),
+        prisma.user.count(),
+        prisma.resumeLog.aggregate({
+            _avg: { matchScore: true }
+        }),
+        prisma.resumeLog.findMany({
+            orderBy: { createdAt: 'desc' },
+            take: 50
+        }),
+        prisma.user.findMany({
+            orderBy: { createdAt: 'desc' },
+            take: 50
+        }),
+        prisma.feedback.count(),
+        prisma.feedback.findMany({
+            include: { user: true },
+            orderBy: { createdAt: 'desc' },
+            take: 20
+        })
+    ]);
 
-    const avgScoreAgg = await prisma.resumeLog.aggregate({
-        _avg: { matchScore: true }
-    });
     const avgScore = Math.round(avgScoreAgg._avg.matchScore || 0);
-
-    // 2. Fetch Resume Activity
-    const logs = await prisma.resumeLog.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 50
-    });
-
-    // 3. Fetch Registered Users
-    const users = await prisma.user.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 50
-    });
-
-    // 4. Fetch User Feedback
-    const totalFeedback = await prisma.feedback.count();
-    const feedbackList = await prisma.feedback.findMany({
-        include: { user: true },
-        orderBy: { createdAt: 'desc' },
-        take: 20
-    });
 
     return (
         <div className="min-h-screen bg-background text-foreground p-6 md:p-8">
