@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
+import { authOptions } from "@/app/lib/auth-options";
 
 /**
  * Get the current user's ID from either:
@@ -18,7 +19,8 @@ export async function getUserId(): Promise<string | null> {
     }
 
     // Check NextAuth session (Google login)
-    const nextAuthSession = await getServerSession();
+    // ⚠️ IMPORTANT: Must pass authOptions for this to work in Route Handlers!
+    const nextAuthSession = await getServerSession(authOptions);
     if (nextAuthSession?.user?.email) {
         // For OAuth users, email is the user ID
         return nextAuthSession.user.email;
@@ -33,5 +35,5 @@ export async function getUserId(): Promise<string | null> {
  * Returns null if using custom email/password login
  */
 export async function getAuthSession() {
-    return await getServerSession();
+    return await getServerSession(authOptions);
 }
