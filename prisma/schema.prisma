@@ -55,7 +55,7 @@ model User {
   
   // Daily Resume Limit
   dailyResumeCount Int      @default(0) // Resumes generated today
-  dailyResumeLimit Int      @default(70) // Max resumes per day
+  dailyResumeLimit Int      @default(50) // Max resumes per day
   lastResumeDate   DateTime? // Last resume generation date
   
   createdAt      DateTime         @default(now())
