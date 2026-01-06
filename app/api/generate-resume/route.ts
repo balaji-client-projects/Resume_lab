@@ -5,8 +5,12 @@ import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { prisma } from "@/app/lib/prisma";
 
+<<<<<<< HEAD
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
+=======
+// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || ""); // Unused
+>>>>>>> df19a32
 
 export async function POST(request: NextRequest) {
     console.log("========== /api/generate-resume ==========");
@@ -139,6 +143,7 @@ REQUIRED JSON OUTPUT FORMAT:
 Remember: Write natural, professional content without any markdown or special formatting symbols. Focus on creating compelling, detailed, and quantifiable achievements that demonstrate clear value and align with the job requirements.`;
 
         console.log("🚀 Calling Gemini API (REST)...");
+<<<<<<< HEAD
         const apiKey = process.env.GEMINI_API_KEY;
         const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
@@ -166,19 +171,121 @@ Remember: Write natural, professional content without any markdown or special fo
             const errorText = await response.text();
             console.error("❌ Gemini API Error:", response.status, errorText);
             throw new Error(`Gemini API Error: ${errorText}`);
+=======
+
+        // MOCK MODE: If USE_MOCK_GEMINI=true in .env.local, skip external call
+        // and return a deterministic dummy analysis. Useful for local testing
+        // when the real Gemini key/endpoint is unavailable or rate-limited.
+        if (process.env.USE_MOCK_GEMINI === "true") {
+            console.log("⚠️ Using MOCK GEMINI response (USE_MOCK_GEMINI=true)");
+            const text = JSON.stringify({
+                matchScore: 82,
+                resumeSummary: "Experienced engineer with strong DevOps and cloud skills, focused on CI/CD and automation.",
+                missingKeywords: ["Kubernetes", "Terraform"],
+                insightsAndRecommendations: ["Add more quantifiable metrics.", "Highlight cloud provider experience."],
+                replacements: {
+                    summary_bullet_1: "Experienced DevOps engineer with 6+ years delivering scalable infrastructure and CI/CD automation.",
+                    exp1_bullet_1: "Implemented CI/CD pipelines using GitLab CI to reduce deployment time by 40%.",
+                    exp1_bullet_2: "Automated infrastructure provisioning with Terraform, improving reliability and repeatability."
+                }
+            });
+
+            let analysis: any;
+            try {
+                analysis = JSON.parse(text);
+                console.log("✅ MOCK JSON parsed successfully");
+            } catch (err) {
+                console.error("❌ MOCK JSON Parse Failed:", err);
+                analysis = { matchScore: 0, replacements: {} };
+            }
+
+            // Apply templating and logging flow below using `analysis` variable.
+            // (We reuse the code path after parsing Gemini response.)
+
+            // 📝 APPLY CHANGES TO DOCX (reuse same logic below)
+            let outputBuffer = buffer;
+            try {
+                const zip = new PizZip(buffer);
+                const doc = new Docxtemplater(zip, {
+                    paragraphLoop: true,
+                    linebreaks: true,
+                    delimiters: { start: '{{', end: '}}' },
+                });
+
+                doc.render(analysis.replacements || {});
+
+                outputBuffer = Buffer.from(doc.getZip().generate({
+                    type: "nodebuffer",
+                    compression: "DEFLATE",
+                }) as any);
+                console.log("✅ DOCX Updated Successfully (MOCK)");
+            } catch (docxError: any) {
+                console.error("❌ Docxtemplater Error (MOCK):", docxError);
+            }
+
+            // Skip all downstream external calls and return success immediately
+            const sanitize = (str: string) => str.replace(/[^a-zA-Z0-9]/g, '_');
+            const userName = "User";
+            const customFileName = `${sanitize(userName)}_${sanitize(companyName)}_${sanitize(jobTitle)}_resume.docx`;
+
+            return NextResponse.json({
+                success: true,
+                analysis,
+                fileData: outputBuffer.toString("base64"),
+                fileName: customFileName,
+            });
+>>>>>>> df19a32
         }
 
-        const result = await response.json();
-        const text = result.candidates[0].content.parts[0].text;
-        console.log("Gemini Response Length:", text.length);
+        // Call Gemini REST API - Using 'gemini-1.5-flash' (Stable & Fast)
+        // If you get 503 Overloaded, PLEASE RETRY. It is temporary server load.
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+            console.error("❌ Missing GEMINI_API_KEY");
+            return NextResponse.json(
+                { error: "Server misconfiguration: GEMINI_API_KEY not set" },
+                { status: 500 }
+            );
+        }
+
+        // Use Google Generative AI SDK
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash",
+            generationConfig: {
+                // Ensure JSON output
+                responseMimeType: "application/json",
+            }
+        });
+
+        console.log("🚀 Calling Gemini API via SDK...");
+        let text = "";
+        try {
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            text = response.text();
+            console.log("Gemini Response Length:", text.length);
+        } catch (apiError: any) {
+            console.error("❌ Gemini SDK Error:", apiError);
+            return NextResponse.json(
+                { error: "Gemini API Error", details: apiError.message },
+                { status: 500 }
+            );
+        }
 
         let analysis: any;
         try {
+            // Clean up potentially markdown-wrapped JSON
             const cleaned = text.replace(/```json|```/g, "").trim();
             analysis = JSON.parse(cleaned);
             console.log("✅ JSON parsed successfully");
         } catch (err) {
             console.error("❌ JSON Parse Failed:", err);
+<<<<<<< HEAD
+=======
+            console.log("Raw Response:", text);
+            // Fallback
+>>>>>>> df19a32
             analysis = {
                 matchScore: 0,
                 replacements: {}
@@ -251,6 +358,7 @@ Remember: Write natural, professional content without any markdown or special fo
                         isNewDay = lastDateMidnight < today;
                     }
 
+<<<<<<< HEAD
                     if (isNewDay) {
                         await prisma.user.update({
                             where: { id: userId },
@@ -276,6 +384,25 @@ Remember: Write natural, professional content without any markdown or special fo
                             error: `You have reached your limit of ${LIMIT} resumes. Please upgrade to Pro.`
                         }, { status: 403 });
                     }
+=======
+                // 🛑 DAILY LIMIT CHECK (50 resumes per day)
+                const DAILY_LIMIT = 50;
+                const currentDailyCount = isNewDay ? 0 : user.dailyResumeCount;
+                if (currentDailyCount >= DAILY_LIMIT) {
+                    return NextResponse.json(
+                        { error: `Daily limit reached! You can generate up to ${DAILY_LIMIT} resumes per day. Try again tomorrow.` },
+                        { status: 403 }
+                    );
+                }
+
+                // 🛑 MONTHLY LIMIT CHECK
+                const LIMIT = user.plan === "PRO" ? 1500 : 5;
+                if (user.creditsUsed >= LIMIT) {
+                    return NextResponse.json(
+                        { error: `You have reached your limit of ${LIMIT} resumes. Please upgrade to Pro.` },
+                        { status: 403 }
+                    );
+>>>>>>> df19a32
                 }
             }
         } catch (authError: any) {
@@ -288,7 +415,7 @@ Remember: Write natural, professional content without any markdown or special fo
         try {
             await prisma.resumeLog.create({
                 data: {
-                    id: crypto.randomUUID(),
+                    // id: Let Prisma generate CUID
                     jobTitle: jobTitle,
                     companyName: companyName,
                     matchScore: analysis.matchScore || 0,
