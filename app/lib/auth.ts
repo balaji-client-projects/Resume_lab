@@ -18,12 +18,21 @@ export async function getUserId(): Promise<string | null> {
         return customSession;
     }
 
-    // Check NextAuth session (Google login)
+    // Check NextAuth session (Google/OAuth login)
     // ⚠️ IMPORTANT: Must pass authOptions for this to work in Route Handlers!
     const nextAuthSession = await getServerSession(authOptions);
     if (nextAuthSession?.user?.email) {
-        // For OAuth users, email is the user ID
-        return nextAuthSession.user.email;
+        // OAuth users: we need to look up their actual ID from the database
+        // (since NextAuth only stores email in the default session)
+        const { prisma } = await import("@/app/lib/prisma");
+        const user = await prisma.user.findUnique({
+            where: { email: nextAuthSession.user.email },
+            select: { id: true }
+        });
+
+        if (user) {
+            return user.id;
+        }
     }
 
     // No session found

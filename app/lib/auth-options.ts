@@ -90,17 +90,20 @@ export const authOptions: NextAuthOptions = {
                 });
 
                 if (!existingUser) {
-                    // Create new user from social login
+                    // Create new user from social login with proper defaults
                     existingUser = await prisma.user.create({
                         data: {
-                            id: user.email, // Using email as ID
+                            // Let Prisma generate the cuid() automatically (DO NOT set id manually!)
                             email: user.email,
                             name: user.name || "",
                             phone: null,
-                            password: "", // No password for OAuth users
+                            password: null, // No password for OAuth users
+                            profileImage: (user as any).image || null,
                             status: "APPROVED",
                             plan: "FREE",
                             creditsUsed: 0,
+                            dailyResumeCount: 0,
+                            dailyResumeLimit: 70,
                             hasFullAccess: true,
                         }
                     });

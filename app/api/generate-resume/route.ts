@@ -3,39 +3,40 @@ import { getUserId } from "@/app/lib/auth";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
-import { prisma } from "@/app/lib/prisma"; // Database Connection
+import { prisma } from "@/app/lib/prisma";
 
-// REMOVED global initialization to prevent crash on load
-// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
     console.log("========== /api/generate-resume ==========");
 
-    // Check API Key immediately
+    // 1. Verify API Key
     if (!process.env.GEMINI_API_KEY) {
-        console.error("❌ GEMINI_API_KEY is missing!");
-        return NextResponse.json({ error: "Server Configuration Error: GEMINI_API_KEY is missing" }, { status: 500 });
+        console.error("❌ GEMINI_API_KEY is missing");
+        return NextResponse.json({
+            error: "Server Configuration Error: GEMINI_API_KEY is missing"
+        }, { status: 500 });
     }
 
+    // 2. Initialize GoogleGenerativeAI
     let genAI;
     try {
         genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    } catch (e) {
+    } catch (e: any) {
         console.error("❌ Failed to initialize GoogleGenerativeAI:", e);
-        return NextResponse.json({ error: "Failed to initialize AI service" }, { status: 500 });
+        return NextResponse.json({
+            error: "Failed to initialize AI service",
+            details: e.message
+        }, { status: 500 });
     }
-
-    console.log("METHOD:", request.method);
-    console.log("URL:", request.url);
-    console.log("GEMINI_API_KEY:", "Loaded");
 
     try {
         console.log("🔄 Parsing form data...");
         const formData = await request.formData();
 
-        const companyName = formData.get("companyName") as string || "JobFit Pro"; // Default fallback
+        const companyName = formData.get("companyName") as string || "JobFit Pro";
         const jobTitle = formData.get("jobTitle") as string || "Candidate Application";
-
         const jobDescription = formData.get("jobDescription") as string | null;
         const file = formData.get("resume") as unknown as File | null;
 
@@ -46,31 +47,28 @@ export async function POST(request: NextRequest) {
         });
 
         if (!jobDescription || !file) {
-            return NextResponse.json(
-                {
-                    error: "Missing job description or resume file",
-                },
-                { status: 400 }
-            );
+            return NextResponse.json({
+                error: "Missing job description or resume file",
+            }, { status: 400 });
         }
 
         console.log("📄 Resume File:", file.name, file.size, "bytes");
 
+        // Extract text from DOCX
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        // Extract text from DOCX for analysis
         let resumeText = "";
         try {
             const zip = new PizZip(buffer);
             const xml = zip.files["word/document.xml"].asText();
-            // Simple regex to strip XML tags and get text content
             resumeText = xml.replace(/<[^>]+>/g, " ");
         } catch (e) {
             console.error("Text extraction failed:", e);
             resumeText = "Could not extract text. Analyze based on placeholders if present.";
         }
 
+        // Generate AI content
         const prompt = `You are an expert ATS (Applicant Tracking System) Scanner and Professional Resume Writer.
 
 Your task is to:
@@ -141,25 +139,18 @@ REQUIRED JSON OUTPUT FORMAT:
 Remember: Write natural, professional content without any markdown or special formatting symbols. Focus on creating compelling, detailed, and quantifiable achievements that demonstrate clear value and align with the job requirements.`;
 
         console.log("🚀 Calling Gemini API (REST)...");
-
-        // Call Gemini REST API - Back to 'gemini-flash-latest' (The ONLY model compatible with your usage limits)
-        // If you get 503 Overloaded, PLEASE RETRY. It is temporary server load.
         const apiKey = process.env.GEMINI_API_KEY;
         const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
             {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }],
+                    contents: [{ parts: [{ text: prompt }] }],
                     generationConfig: {
-                        temperature: 0,  // Make output deterministic (same input = same output)
-                        topP: 0.1,       // Focus on most likely tokens
-                        topK: 1          // Always pick the most likely token
+                        temperature: 0,
+                        topP: 0.1,
+                        topK: 1
                     },
                     safetySettings: [
                         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
@@ -174,7 +165,7 @@ Remember: Write natural, professional content without any markdown or special fo
         if (!response.ok) {
             const errorText = await response.text();
             console.error("❌ Gemini API Error:", response.status, errorText);
-            throw new Error(errorText); // Throw the raw error text from Google
+            throw new Error(`Gemini API Error: ${errorText}`);
         }
 
         const result = await response.json();
@@ -188,24 +179,22 @@ Remember: Write natural, professional content without any markdown or special fo
             console.log("✅ JSON parsed successfully");
         } catch (err) {
             console.error("❌ JSON Parse Failed:", err);
-            // Fallback
             analysis = {
                 matchScore: 0,
                 replacements: {}
             };
         }
 
-        // 📝 APPLY CHANGES TO DOCX
+        // Apply changes to DOCX
         let outputBuffer = buffer;
         try {
             const zip = new PizZip(buffer);
             const doc = new Docxtemplater(zip, {
                 paragraphLoop: true,
                 linebreaks: true,
-                delimiters: { start: '{{', end: '}}' }, // IMPORTANT: Match user's {{tag}} format
+                delimiters: { start: '{{', end: '}}' },
             });
 
-            // Feed the AI data into the document
             doc.render(analysis.replacements || {});
 
             outputBuffer = Buffer.from(doc.getZip().generate({
@@ -218,59 +207,116 @@ Remember: Write natural, professional content without any markdown or special fo
             if (docxError.properties && docxError.properties.errors) {
                 docxError.properties.errors.forEach((e: any) => console.error("Template Error:", e));
             }
-            // We continue returning the original file if templating fails
         }
 
-
-
-        // 🔍 DEBUG MODE: SKIPPING AUTH & DB LOGGING TO ISOLATE ERROR
-        // ---------------------------------------------------------
-        let userEmail = "Debug_User";
-        let userName = "Debug User";
+        // Fetch user and check subscription
+        let userEmail = "Anonymous";
+        let userName = "User";
         let userId: string | null = null;
 
-        // const sessionUserId = await getUserId();
-        // ... (Auth checks commented out) 
+        const sessionUserId = await getUserId();
 
-        console.log("⚠️ DEBUG: Auth & DB checks skipped. Running in bypass mode.");
-
-        /*
         if (sessionUserId) {
-            // ... (original auth logic)
-        }
-        */
+            const user = await prisma.user.findUnique({
+                where: { id: sessionUserId }
+            });
 
-        // 📊 SAFE DATABASE LOGGING & INCREMENT USAGE
-        /*
+            if (user) {
+                userEmail = user.email;
+                userName = user.name || user.email.split('@')[0];
+                userId = user.id;
+
+                // Check full access
+                if (!(user as any).hasFullAccess) {
+                    return NextResponse.json({
+                        error: "Access Restricted",
+                        message: "Your account is approved but doesn't have resume generation access yet. Please send your resume to our WhatsApp: +1 (409) 919-7989. After reviewing your resume, admin will grant you plan access to use all features."
+                    }, { status: 403 });
+                }
+
+                // Check if it's a new day - Reset daily count
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const lastDate = user.lastResumeDate ? new Date(user.lastResumeDate) : null;
+                const isNewDay = !lastDate || lastDate < today;
+
+                if (isNewDay) {
+                    await prisma.user.update({
+                        where: { id: userId },
+                        data: {
+                            dailyResumeCount: 0,
+                            lastResumeDate: new Date()
+                        }
+                    });
+                }
+
+                // Daily limit check
+                const currentDailyCount = isNewDay ? 0 : user.dailyResumeCount;
+                if (currentDailyCount >= user.dailyResumeLimit) {
+                    return NextResponse.json({
+                        error: `Daily limit reached! You can generate up to ${user.dailyResumeLimit} resumes per day. Try again tomorrow.`
+                    }, { status: 403 });
+                }
+
+                // Monthly limit check
+                const LIMIT = user.plan === "PRO" ? 70 : 5;
+                if (user.creditsUsed >= LIMIT) {
+                    return NextResponse.json({
+                        error: `You have reached your limit of ${LIMIT} resumes. Please upgrade to Pro.`
+                    }, { status: 403 });
+                }
+            }
+        }
+
+        // Database logging
         try {
-            await prisma.resumeLog.create({ ... });
-            if (userId) { await prisma.user.update({ ... }); }
+            await prisma.resumeLog.create({
+                data: {
+                    id: crypto.randomUUID(),
+                    jobTitle: jobTitle,
+                    companyName: companyName,
+                    matchScore: analysis.matchScore || 0,
+                    originalName: file.name,
+                    userEmail: userEmail,
+                    userId: userId,
+                    status: "SUCCESS"
+                }
+            });
+
+            if (userId) {
+                await prisma.user.update({
+                    where: { id: userId },
+                    data: {
+                        creditsUsed: { increment: 1 },
+                        dailyResumeCount: { increment: 1 },
+                        lastResumeDate: new Date()
+                    }
+                });
+            }
+
+            console.log("✅ Activity logged & Credits Deducted for:", userEmail);
         } catch (dbError) {
             console.warn("⚠️ Database logging failed (Non-critical):", dbError);
         }
-        */
-        // ---------------------------------------------------------
 
-        // Create custom filename: Name_Company_Role_resume.docx
+        // Create custom filename
         const sanitize = (str: string) => str.replace(/[^a-zA-Z0-9]/g, '_');
         const customFileName = `${sanitize(userName)}_${sanitize(companyName)}_${sanitize(jobTitle)}_resume.docx`;
 
         return NextResponse.json({
             success: true,
             analysis,
-            fileData: outputBuffer.toString("base64"), // Return the MODIFIED file
+            fileData: outputBuffer.toString("base64"),
             fileName: customFileName,
         });
 
     } catch (error: any) {
         console.error("❌ Fatal Error:", error);
-        return NextResponse.json(
-            {
-                error: "Failed to generate resume",
-                message: error.message,
-                stack: error.stack,
-            },
-            { status: 500 }
-        );
+        return NextResponse.json({
+            error: "Failed to generate resume",
+            message: error.message,
+            stack: error.stack,
+        }, { status: 500 });
     }
 }
