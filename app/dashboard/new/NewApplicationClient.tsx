@@ -250,8 +250,8 @@ export default function NewApplicationClient() {
 
                         {step === 3 && analysis && (
                             <div className="space-y-6 animate-fade-in">
-                                {/* Score Header */}
-                                <div className="flex items-center justify-between pb-6 border-b border-border">
+                                {/* 🔒 ATS SCORE PERCENTAGE - HIDDEN (Not needed by user) */}
+                                {/* <div className="flex items-center justify-between pb-6 border-b border-border">
                                     <div>
                                         <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">ATS Match Score</p>
                                         <div className="flex items-baseline gap-2">
@@ -262,7 +262,7 @@ export default function NewApplicationClient() {
                                     <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-500/20 border-4 border-green-500/20 flex items-center justify-center">
                                         <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
                                     </div>
-                                </div>
+                                </div> */}
 
                                 {/* Missing Keywords */}
                                 {analysis.missingKeywords && analysis.missingKeywords.length > 0 && (
