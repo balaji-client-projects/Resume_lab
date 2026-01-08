@@ -12,7 +12,8 @@ export default function ContactPage() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Single Column Layout - All Cards Vertical */}
+                <div className="space-y-6">
                     {/* Contact Information Card */}
                     <div className="card p-8 space-y-6">
                         <div>
@@ -34,11 +35,11 @@ export default function ContactPage() {
                                 <h3 className="text-sm font-semibold text-foreground mb-1">Email Us</h3>
                                 <a
                                     href="mailto:resumelabproai007@gmail.com"
-                                    className="text-primary hover:underline font-medium"
+                                    className="inline-block px-4 py-2 bg-primary/20 hover:bg-primary/30 border-2 border-primary rounded-lg text-primary hover:text-primary font-bold transition-all hover:scale-105"
                                 >
                                     resumelabproai007@gmail.com
                                 </a>
-                                <p className="text-xs text-muted-foreground mt-1">
+                                <p className="text-xs text-muted-foreground mt-2">
                                     We typically respond within 24 hours
                                 </p>
                             </div>
@@ -107,29 +108,29 @@ export default function ContactPage() {
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Additional Support Section */}
-                <div className="mt-6 card p-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary/20">
-                    <div className="flex items-start gap-4">
-                        <div className="p-3 bg-primary/20 rounded-lg">
-                            <Mail className="w-6 h-6 text-primary" />
-                        </div>
-                        <div className="flex-1">
-                            <h3 className="text-lg font-bold text-foreground mb-2">Need Immediate Assistance?</h3>
-                            <p className="text-muted-foreground mb-3">
-                                For urgent matters or technical support, please email us directly at{" "}
-                                <a
-                                    href="mailto:resumelabproai007@gmail.com"
-                                    className="text-primary hover:underline font-semibold"
-                                >
-                                    resumelabproai007@gmail.com
-                                </a>
-                                . We'll get back to you as soon as possible!
-                            </p>
-                            <p className="text-sm text-muted-foreground italic">
-                                💡 Pro Tip: Include "URGENT" in your subject line for priority support.
-                            </p>
+                    {/* Additional Support Section */}
+                    <div className="card p-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary/20">
+                        <div className="flex items-start gap-4">
+                            <div className="p-3 bg-primary/20 rounded-lg">
+                                <Mail className="w-6 h-6 text-primary" />
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-lg font-bold text-foreground mb-2">Need Immediate Assistance?</h3>
+                                <p className="text-muted-foreground mb-3">
+                                    For urgent matters or technical support, please email us directly at{" "}
+                                    <a
+                                        href="mailto:resumelabproai007@gmail.com"
+                                        className="inline-block px-3 py-1 bg-primary/20 hover:bg-primary/30 border-2 border-primary rounded-lg text-primary hover:text-primary font-bold transition-all hover:scale-105"
+                                    >
+                                        resumelabproai007@gmail.com
+                                    </a>
+                                    . We'll get back to you as soon as possible!
+                                </p>
+                                <p className="text-sm text-muted-foreground italic">
+                                    💡 Pro Tip: Include "URGENT" in your subject line for priority support.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
