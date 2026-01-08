@@ -103,15 +103,42 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        {/* Support Card (WhatsApp) */}
+                        {/* Email Contact Card */}
+                        <div className="p-5 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/5 border border-primary/20 backdrop-blur-sm space-y-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="font-semibold text-foreground flex items-center gap-2 text-sm">
+                                    <span className="text-lg">📧</span> Contact Support
+                                </h3>
+                            </div>
+
+                            <div className="space-y-3">
+                                <div className="text-xs text-muted-foreground space-y-1">
+                                    <p>📄 <strong>Send your resume:</strong> Share your documents</p>
+                                    <p>🔧 <strong>Have issues?</strong> We're here to help</p>
+                                </div>
+
+                                <a
+                                    href="mailto:resumelabproai007@gmail.com"
+                                    className="block w-full px-4 py-2.5 bg-primary text-white hover:bg-primary/90 rounded-xl font-bold text-sm transition-all hover:scale-105 shadow-md text-center"
+                                >
+                                    resumelabproai007@gmail.com
+                                </a>
+
+                                <p className="text-[10px] text-muted-foreground text-center italic">
+                                    Click to email us directly
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* WhatsApp Contact Card */}
                         <div className="p-5 rounded-2xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 backdrop-blur-sm">
                             <div className="flex items-center justify-between mb-2">
                                 <h3 className="font-semibold text-foreground flex items-center gap-2 text-sm">
-                                    <span className="text-lg">👋</span> Need Assistance?
+                                    <span className="text-lg">👋</span> Quick Chat
                                 </h3>
                             </div>
                             <p className="text-xs text-muted-foreground mb-4">
-                                Facing issues? Contact admin directly on WhatsApp.
+                                Need instant help? Contact admin on WhatsApp
                             </p>
                             <a
                                 href="https://wa.me/13465099491"
