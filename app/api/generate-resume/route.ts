@@ -217,9 +217,23 @@ Respond ONLY with valid JSON.`;
                         });
                     }
 
-                    const DAILY_LIMIT = 50;
-                    if ((isNewDay ? 0 : user.dailyResumeCount) >= DAILY_LIMIT) {
-                        return NextResponse.json({ error: "Daily limit reached" }, { status: 403 });
+                    const PRO_LIMIT = 50;
+                    const FREE_LIMIT = 5;
+
+                    const isPro = user.plan === 'PRO';
+                    const currentLimit = isPro ? PRO_LIMIT : FREE_LIMIT;
+
+                    const currentUsage = isNewDay ? 0 : user.dailyResumeCount;
+
+                    if (currentUsage >= currentLimit) {
+                        const message = isPro
+                            ? "You have reached your daily PRO limit of 50 resumes."
+                            : "Your free limit is completed (5/5). You need to upgrade the plan to generate more.";
+
+                        return NextResponse.json({
+                            error: "Daily Limit Exceeded",
+                            message: message
+                        }, { status: 403 });
                     }
                 }
             }
