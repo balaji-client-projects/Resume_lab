@@ -45,7 +45,7 @@ export default async function AdminDashboard() {
                 status: true
             },
             orderBy: { createdAt: 'desc' },
-            take: 10 // Reduced from 50 to 10 for faster loading
+            take: 50 // Increased logs limit
         }),
         prisma.user.findMany({
             select: {
@@ -62,7 +62,7 @@ export default async function AdminDashboard() {
                 creditsUsed: true
             },
             orderBy: { createdAt: 'desc' },
-            take: 10 // Reduced from 50 to 10 for faster loading
+            take: 10000 // Increased user limit to show OLD users too
         }),
         prisma.feedback.count(),
         prisma.feedback.findMany({
