@@ -202,15 +202,31 @@ Respond ONLY with valid JSON.`;
                         }, { status: 403 });
                     }
 
-                    // Simple Daily Limit Logic
+                    // Logic for Reset (Pro = Daily, Free = Every 60 Days)
+                    const isPro = user.plan === 'PRO';
+
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
+
                     const lastDate = user.lastResumeDate ? new Date(user.lastResumeDate) : null;
                     if (lastDate) lastDate.setHours(0, 0, 0, 0);
 
-                    const isNewDay = !lastDate || lastDate < today;
+                    let shouldReset = false;
 
-                    if (isNewDay) {
+                    if (!lastDate) {
+                        shouldReset = true;
+                    } else if (isPro) {
+                        // PRO: Reset every new day
+                        shouldReset = lastDate < today;
+                    } else {
+                        // FREE: Reset only if it has been 60 days since the last resume
+                        // (Approx 2 months testing window)
+                        const diffTime = Math.abs(today.getTime() - lastDate.getTime());
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        shouldReset = diffDays >= 60;
+                    }
+
+                    if (shouldReset) {
                         await prisma.user.update({
                             where: { id: userId },
                             data: { dailyResumeCount: 0, lastResumeDate: today }
@@ -220,10 +236,9 @@ Respond ONLY with valid JSON.`;
                     const PRO_LIMIT = 50;
                     const FREE_LIMIT = 5;
 
-                    const isPro = user.plan === 'PRO';
                     const currentLimit = isPro ? PRO_LIMIT : FREE_LIMIT;
 
-                    const currentUsage = isNewDay ? 0 : user.dailyResumeCount;
+                    const currentUsage = shouldReset ? 0 : user.dailyResumeCount;
 
                     if (currentUsage >= currentLimit) {
                         const message = isPro
