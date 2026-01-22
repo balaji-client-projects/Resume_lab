@@ -40,32 +40,34 @@ export default function SubscriptionStats({
                     </div>
                 </div>
 
-                {/* DAILY LIMIT BAR */}
-                <div className="mb-4 relative z-10">
-                    <div className="flex justify-between items-center text-xs mb-2">
-                        <div className="flex items-center gap-1.5">
-                            <Calendar className="w-3.5 h-3.5 text-blue-500" />
-                            <span className="text-muted-foreground font-medium">Daily Limit</span>
+                {/* DAILY LIMIT BAR - Hidden for FREE plan */}
+                {plan !== "FREE" && (
+                    <div className="mb-4 relative z-10">
+                        <div className="flex justify-between items-center text-xs mb-2">
+                            <div className="flex items-center gap-1.5">
+                                <Calendar className="w-3.5 h-3.5 text-blue-500" />
+                                <span className="text-muted-foreground font-medium">Daily Limit</span>
+                            </div>
+                            <span className={`font-bold ${dailyUsed >= dailyLimit ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}>
+                                {dailyUsed} / {dailyLimit}
+                            </span>
                         </div>
-                        <span className={`font-bold ${dailyUsed >= dailyLimit ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}>
-                            {dailyUsed} / {dailyLimit}
-                        </span>
-                    </div>
-                    <div className="h-3 bg-muted rounded-full overflow-hidden border border-border">
-                        <div
-                            className={`h-full rounded-full transition-all duration-1000 ease-out ${dailyUsed >= dailyLimit
+                        <div className="h-3 bg-muted rounded-full overflow-hidden border border-border">
+                            <div
+                                className={`h-full rounded-full transition-all duration-1000 ease-out ${dailyUsed >= dailyLimit
                                     ? 'bg-gradient-to-r from-red-500 to-red-600 animate-pulse'
                                     : 'bg-gradient-to-r from-blue-500 to-cyan-500'
-                                }`}
-                            style={{ width: `${dailyPercent}%` }}
-                        />
+                                    }`}
+                                style={{ width: `${dailyPercent}%` }}
+                            />
+                        </div>
+                        {dailyUsed >= dailyLimit && (
+                            <p className="text-xs text-red-600 dark:text-red-400 mt-1 font-medium">
+                                🔴 Daily limit reached! Resets tomorrow.
+                            </p>
+                        )}
                     </div>
-                    {dailyUsed >= dailyLimit && (
-                        <p className="text-xs text-red-600 dark:text-red-400 mt-1 font-medium">
-                            🔴 Daily limit reached! Resets tomorrow.
-                        </p>
-                    )}
-                </div>
+                )}
 
                 {/* MONTHLY LIMIT BAR */}
                 <div className="mb-4 relative z-10">
@@ -81,8 +83,8 @@ export default function SubscriptionStats({
                     <div className="h-3 bg-muted rounded-full overflow-hidden border border-border">
                         <div
                             className={`h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(var(--primary),0.5)] ${creditsUsed >= maxCredits
-                                    ? 'bg-gradient-to-r from-red-500 to-orange-500 animate-pulse'
-                                    : 'bg-gradient-to-r from-primary to-accent'
+                                ? 'bg-gradient-to-r from-red-500 to-orange-500 animate-pulse'
+                                : 'bg-gradient-to-r from-primary to-accent'
                                 }`}
                             style={{ width: `${monthlyPercent}%` }}
                         />
