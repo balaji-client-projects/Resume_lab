@@ -154,9 +154,8 @@ Respond ONLY with valid JSON.`;
         if (!analysis) {
             console.error("❌ All models failed:", errorLog);
             return NextResponse.json({
-                error: "All AI models failed to generate content.",
-                details: errorLog.join("\n\n"),
-                suggestion: "Please check the 'details' to see why each model failed."
+                error: `ALL MODELS FAILED:\n${errorLog.join("\n")}`,
+                details: errorLog.join("\n\n")
             }, { status: 500 });
         }
 
