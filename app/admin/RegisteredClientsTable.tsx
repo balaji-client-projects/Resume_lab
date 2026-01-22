@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Users, Search, X, Filter } from "lucide-react";
 import UserActions from "./UserActions";
 
@@ -51,6 +51,19 @@ export default function RegisteredClientsTable({ users: initialUsers }: Register
 
         return filtered;
     }, [initialUsers, searchQuery, planFilter, statusFilter]);
+
+    // PAGINATION LOGIC
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+
+    // Reset to page 1 whenever filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, planFilter, statusFilter]);
+
+    const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const paginatedUsers = filteredUsers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     return (
         <div className="card overflow-hidden">
@@ -171,7 +184,7 @@ export default function RegisteredClientsTable({ users: initialUsers }: Register
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredUsers.length === 0 ? (
+                        {paginatedUsers.length === 0 ? (
                             <tr>
                                 <td colSpan={6} className="text-center text-muted-foreground py-12">
                                     {searchQuery ? (
@@ -191,7 +204,7 @@ export default function RegisteredClientsTable({ users: initialUsers }: Register
                                 </td>
                             </tr>
                         ) : (
-                            filteredUsers.map(user => (
+                            paginatedUsers.map(user => (
                                 <tr key={user.id}>
                                     <td className="text-muted-foreground font-medium">
                                         {new Date(user.createdAt).toLocaleDateString()}
@@ -240,6 +253,54 @@ export default function RegisteredClientsTable({ users: initialUsers }: Register
                     </tbody>
                 </table>
             </div>
+
+            {/* PAGINATION CONTROLS */}
+            {totalPages > 1 && (
+                <div className="p-4 border-t border-border flex items-center justify-between bg-muted/10">
+                    <p className="text-sm text-muted-foreground">
+                        Showing <span className="font-bold">{startIndex + 1}</span> to <span className="font-bold">{Math.min(startIndex + ITEMS_PER_PAGE, filteredUsers.length)}</span> of {filteredUsers.length} users
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className="btn btn-ghost text-sm disabled:opacity-50"
+                        >
+                            Previous
+                        </button>
+                        <div className="flex items-center gap-1">
+                            {Array.from({ length: totalPages }).map((_, i) => {
+                                // Simple logic to show limited page numbers could be added here, 
+                                // but for < 100 pages, standard list is okay or we stick to Prev/Next for simplicity.
+                                // For now, just Prev/Next + Current Page indicator is cleanest.
+                                if (Math.abs(currentPage - (i + 1)) <= 1 || i === 0 || i === totalPages - 1) {
+                                    return (
+                                        <button
+                                            key={i}
+                                            onClick={() => setCurrentPage(i + 1)}
+                                            className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${currentPage === i + 1
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'hover:bg-muted text-muted-foreground'
+                                                }`}
+                                        >
+                                            {i + 1}
+                                        </button>
+                                    );
+                                }
+                                if (Math.abs(currentPage - (i + 1)) === 2) return <span key={i} className="text-muted-foreground">...</span>;
+                                return null;
+                            })}
+                        </div>
+                        <button
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className="btn btn-ghost text-sm disabled:opacity-50"
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
