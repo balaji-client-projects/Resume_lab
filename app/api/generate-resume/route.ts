@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 Your task is to:
 1. READ the Job Description and the Resume Content below.
 2. CALCULATE a REAL Match Score (0-100) based on strict keyword matching and experience alignment.
-3. GENERATE highly effective, optimized content to fill the placeholders in the resume.
+3. GENERATE highly effective, optimized content for the SPECIFIC placeholders listed below.
 
 JOB DESCRIPTION:
 ${jobDescription}
@@ -56,23 +56,43 @@ ${resumeText.substring(0, 10000)}
 
 RESUME FILE NAME: ${file.name}
 
-CRITICAL FORMATTING RULES:
-- DO NOT use any markdown formatting symbols like **, ##, __, or any special characters
-- Write in plain text only
-- Each bullet point should be a complete, detailed sentence
-- Use strong action verbs at the start of each bullet
-- Content must be professional and quantifiable
+CRITICAL RULES:
+- If you have no good content for a placeholder, return an empty string "" (DO NOT return null or undefined).
+- Each bullet point must be a strong, action-oriented sentence using keywords from the JD.
+- "exp2" refers to the MOST RECENT job. "exp1" refers to the PREVIOUS job.
 
-REQUIRED JSON OUTPUT FORMAT:
+REQUIRED JSON OUTPUT FORMAT (Strict Keys):
 {
   "matchScore": (Integer 0-100),
-  "resumeSummary": "Professional summary text...",
+  "resumeSummary": "Professional summary paragraph...",
   "missingKeywords": ["keyword1", "keyword2"],
   "insightsAndRecommendations": ["advice1", "advice2"],
   "replacements": {
-      "summary_bullet_1": "Optimized content...",
-      "exp2_bullet_1": "Optimized content...",
-      // ... generate content for likely placeholders
+      "summary_bullet_1": "Strong achievement...",
+      "summary_bullet_2": "...",
+      "summary_bullet_3": "...",
+      "summary_bullet_4": "...",
+      "summary_bullet_5": "...",
+      "summary_bullet_6": "...",
+      "summary_bullet_7": "...",
+
+      "exp2_bullet_1": "Most recent job achievement...",
+      "exp2_bullet_2": "...",
+      "exp2_bullet_3": "...",
+      "exp2_bullet_4": "...",
+      "exp2_bullet_5": "...",
+      "exp2_bullet_6": "...",
+      "exp2_achievement_1": "Key quantifiable win...",
+      "exp2_achievement_2": "Another key win...",
+
+      "exp1_bullet_1": "Previous job achievement...",
+      "exp1_bullet_2": "...",
+      "exp1_bullet_3": "...",
+      "exp1_bullet_4": "...",
+      "exp1_bullet_5": "...",
+      "exp1_bullet_6": "...",
+      "exp1_achievement_1": "Key quantifiable win...",
+      "exp1_achievement_2": "Another key win..."
   }
 }
 
@@ -153,9 +173,18 @@ Respond ONLY with valid JSON.`;
                 paragraphLoop: true,
                 linebreaks: true,
                 delimiters: { start: '{{', end: '}}' },
+                nullGetter: (part) => { return ""; } // IMPORTANT: Replaces {{undefined}} with empty string
             });
 
-            doc.render(analysis.replacements || {});
+            // Clean replacements (remove nulls/undefined)
+            const cleanReplacements = { ...analysis.replacements };
+            if (cleanReplacements) {
+                Object.keys(cleanReplacements).forEach(key => {
+                    if (!cleanReplacements[key]) cleanReplacements[key] = "";
+                });
+            }
+
+            doc.render(cleanReplacements || {});
 
             outputBuffer = Buffer.from(doc.getZip().generate({
                 type: "nodebuffer",
