@@ -78,109 +78,57 @@ REQUIRED JSON OUTPUT FORMAT:
 
 Respond ONLY with valid JSON.`;
 
-        // Direct REST API Fallback Implementation
-        // UPDATED (Jan 2026): Prioritizing Gemini 2.5 Flash-Lite for 1000 FREE requests/day!
-        // Regular models only have 100 RPD on free tier, but Flash-Lite has 10x more (1000 RPD)
-        const models = [
-            "gemini-1.5-flash",          // 🌟 1500 RPD FREE (Most reliable stable model)
-            "gemini-1.5-flash-latest",   // Alias for stable flash
-            "gemini-flash-latest",       // Another alias
-            "gemini-2.0-flash",          // experimental
-        ];
+        // FIXED: Single Model Implementation (Gemini 1.5 Flash)
+        const MODEL_NAME = "gemini-1.5-flash"; // Correct stable name (No '-latest')
+        const API_VERSION = "v1beta"; // Required for JSON Mode & 1.5 Models
+        const API_KEY = process.env.GEMINI_API_KEY;
+        const URL = `https://generativelanguage.googleapis.com/${API_VERSION}/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
 
-        // 📦 OLD MODELS ARRAY (Commented out for reference)
-        // const models = [
-        //     "gemini-flash-latest",       // Stable 1.5 Flash alias (Available)
-        //     "gemini-flash-lite-latest",  // Lightest/Fastest 1.5 alias (Available)
-        //     "gemini-2.0-flash-lite-preview-02-05", // New Lite model
-        //     "gemini-2.5-flash",          // User preferred
-        //     "gemini-2.0-flash",
-        //     "gemini-exp-1206"
-        // ];
+        console.log(`🌐 Calling Gemini API: ${MODEL_NAME} (${API_VERSION})`);
 
-        const errorLog: string[] = [];
-        let analysis: any = null;
-
-        for (const model of models) {
-            // Retry logic for 429 errors (Rate Limiting)
-            let attempt = 0;
-            const maxRetries = 3;
-            let success = false;
-
-            while (attempt < maxRetries && !success) {
-                try {
-                    console.log(`🌐 [Attempt ${attempt + 1}/${maxRetries}] POST https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`);
-
-                    const response = await fetch(
-                        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`,
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                contents: [{
-                                    parts: [{ text: promptText }]
-                                }],
-                                generationConfig: {
-                                    responseMimeType: "application/json",
-                                    temperature: 0,
-                                    topP: 1,
-                                    topK: 1
-                                }
-                            })
-                        }
-                    );
-
-                    if (!response.ok) {
-                        const errText = await response.text();
-
-                        // If rate limit (429), throw specifically to catch and retry
-                        if (response.status === 429) {
-                            throw new Error(`RateLimit: ${errText}`);
-                        }
-
-                        throw new Error(`HTTP ${response.status}: ${errText}`);
-                    }
-
-                    const data = await response.json();
-
-                    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-                        const rawText = data.candidates[0].content.parts[0].text;
-                        const cleaned = rawText.replace(/```json|```/g, "").trim();
-                        analysis = JSON.parse(cleaned);
-                        console.log(`✅ Success with ${model}`);
-                        success = true;
-                        break; // Break the while loop
-                    } else {
-                        throw new Error("No candidates returned");
-                    }
-
-                } catch (e: any) {
-                    const isRateLimit = e.message.includes("RateLimit") || e.message.includes("429");
-
-                    if (isRateLimit) {
-                        console.warn(`⏳ Rate Limit hit on ${model} (Attempt ${attempt + 1}). Waiting...`);
-                        // Exponential backoff: 2s, 4s, 8s
-                        const delay = 2000 * Math.pow(2, attempt);
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        attempt++;
-                    } else {
-                        console.warn(`⚠️ Failed with ${model}: ${e.message}`);
-                        errorLog.push(`[${model}] ${e.message}`);
-                        break; // Don't retry for non-rate-limit errors
-                    }
+        const response = await fetch(URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: promptText }]
+                }],
+                generationConfig: {
+                    responseMimeType: "application/json", // Enforce JSON
+                    temperature: 0.2,
                 }
-            }
+            })
+        });
 
-            if (success) break; // Break the models loop if successful
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`❌ Google API Error: ${response.status}`, errorText);
+
+            return NextResponse.json({
+                error: `Google API Error (${response.status})`,
+                details: `Failed to generate resume content. Google says: ${errorText}`
+            }, { status: response.status });
         }
 
-        if (!analysis) {
-            console.error("❌ All models failed:", errorLog);
+        const data = await response.json();
+        let analysis: any = null;
+
+        try {
+            const textPart = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!textPart) throw new Error("No text returned in candidate");
+
+            // Strip markdown code blocks if present
+            const cleanJson = textPart.replace(/```json/g, "").replace(/```/g, "").trim();
+            analysis = JSON.parse(cleanJson);
+            console.log("✅ Resume generated successfully!");
+
+        } catch (parseError: any) {
+            console.error("❌ JSON Parse Failed:", parseError);
             return NextResponse.json({
-                error: `ALL MODELS FAILED:\n${errorLog.join("\n")}`,
-                details: errorLog.join("\n\n")
+                error: "Invalid JSON response from AI",
+                details: `AI returned invalid data: ${parseError.message}`
             }, { status: 500 });
         }
 
