@@ -82,12 +82,10 @@ Respond ONLY with valid JSON.`;
         // UPDATED (Jan 2026): Prioritizing Gemini 2.5 Flash-Lite for 1000 FREE requests/day!
         // Regular models only have 100 RPD on free tier, but Flash-Lite has 10x more (1000 RPD)
         const models = [
-            "gemini-2.5-flash-lite",     // 🌟 1000 RPD FREE! (Best free tier option)
-            "gemini-flash-lite-latest",  // Lightest/Fastest alias
-            "gemini-2.0-flash-lite",     // Lite version (better quota)
-            "gemini-2.5-flash",          // Standard Flash (100 RPD)
-            "gemini-flash-latest",       // Stable 1.5 Flash alias
-            "gemini-2.0-flash"           // 2.0 Flash (100 RPD)
+            "gemini-1.5-flash",          // 🌟 1500 RPD FREE (Most reliable stable model)
+            "gemini-1.5-flash-latest",   // Alias for stable flash
+            "gemini-flash-latest",       // Another alias
+            "gemini-2.0-flash",          // experimental
         ];
 
         // 📦 OLD MODELS ARRAY (Commented out for reference)
