@@ -210,7 +210,7 @@ export default async function AdminDashboard() {
                                 <tbody>
                                     {feedbackList.length === 0 ? (
                                         <tr><td colSpan={5} className="text-center text-muted-foreground py-12">No feedback received yet.</td></tr>
-                                    ) : feedbackList.map(feedback => (
+                                    ) : feedbackList.map((feedback: any) => (
                                         <tr key={feedback.id}>
                                             <td className="text-muted-foreground font-medium">
                                                 {new Date(feedback.createdAt).toLocaleDateString()}
