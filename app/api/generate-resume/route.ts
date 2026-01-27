@@ -78,37 +78,51 @@ REQUIRED JSON OUTPUT FORMAT:
 
 Respond ONLY with valid JSON.`;
 
-        // FIXED: Single Model Implementation (Gemini 1.5 Flash)
-        const MODEL_NAME = "gemini-1.5-flash-001"; // Correct stable name (No '-latest')
-        const API_VERSION = "v1beta"; // Required for JSON Mode & 1.5 Models
-        const API_KEY = process.env.GEMINI_API_KEY;
-        const URL = `https://generativelanguage.googleapis.com/${API_VERSION}/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+        // IMPLEMENTATION: OpenAI GPT-4o-mini (Stable & Fast)
+        const MODEL_NAME = "gpt-4o-mini";
+        const API_KEY = process.env.OPENAI_API_KEY;
+        const URL = "https://api.openai.com/v1/chat/completions";
 
-        console.log(`🌐 Calling Gemini API: ${MODEL_NAME} (${API_VERSION})`);
+        if (!API_KEY) {
+            console.error("❌ OPENAI_API_KEY is missing!");
+            return NextResponse.json({
+                error: "Server Configuration Error",
+                details: "OpenAI API Key is not configured."
+            }, { status: 500 });
+        }
+
+        console.log(`🌐 Calling OpenAI API: ${MODEL_NAME}`);
 
         const response = await fetch(URL, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${API_KEY}`
             },
             body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: promptText }]
-                }],
-                generationConfig: {
-                    responseMimeType: "application/json", // Enforce JSON
-                    temperature: 0.2,
-                }
+                model: MODEL_NAME,
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are an expert ATS Resume Optimizer. You always output valid JSON."
+                    },
+                    {
+                        role: "user",
+                        content: promptText
+                    }
+                ],
+                response_format: { type: "json_object" }, // Guarantees JSON output
+                temperature: 0.2,
             })
         });
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error(`❌ Google API Error: ${response.status}`, errorText);
+            console.error(`❌ OpenAI API Error: ${response.status}`, errorText);
 
             return NextResponse.json({
-                error: `Google API Error (${response.status})`,
-                details: `Failed to generate resume content. Google says: ${errorText}`
+                error: `OpenAI API Error (${response.status})`,
+                details: `Failed to generate resume content. OpenAI says: ${errorText}`
             }, { status: response.status });
         }
 
@@ -116,12 +130,11 @@ Respond ONLY with valid JSON.`;
         let analysis: any = null;
 
         try {
-            const textPart = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (!textPart) throw new Error("No text returned in candidate");
+            const content = data.choices?.[0]?.message?.content;
+            if (!content) throw new Error("No content returned from OpenAI");
 
-            // Strip markdown code blocks if present
-            const cleanJson = textPart.replace(/```json/g, "").replace(/```/g, "").trim();
-            analysis = JSON.parse(cleanJson);
+            console.log("📄 OpenAI Response received");
+            analysis = JSON.parse(content);
             console.log("✅ Resume generated successfully!");
 
         } catch (parseError: any) {
