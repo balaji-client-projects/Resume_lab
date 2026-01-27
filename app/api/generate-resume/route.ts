@@ -76,23 +76,38 @@ REQUIRED JSON OUTPUT FORMAT (Strict Keys):
       "summary_bullet_6": "...",
       "summary_bullet_7": "...",
 
-      "exp2_bullet_1": "Most recent job achievement...",
-      "exp2_bullet_2": "...",
-      "exp2_bullet_3": "...",
-      "exp2_bullet_4": "...",
-      "exp2_bullet_5": "...",
-      "exp2_bullet_6": "...",
-      "exp2_achievement_1": "Key quantifiable win...",
-      "exp2_achievement_2": "Another key win...",
+      "exp2_bullet_1": "Job 1 (Most Recent) Bullet 1...",
+      "exp2_bullet_2": "Job 1 Bullet 2...",
+      "exp2_bullet_3": "Job 1 Bullet 3...",
+      "exp2_bullet_4": "Job 1 Bullet 4...",
+      "exp2_bullet_5": "Job 1 Bullet 5...",
+      "exp2_achievement_1": "Key Win...",
 
-      "exp1_bullet_1": "Previous job achievement...",
-      "exp1_bullet_2": "...",
-      "exp1_bullet_3": "...",
-      "exp1_bullet_4": "...",
-      "exp1_bullet_5": "...",
-      "exp1_bullet_6": "...",
-      "exp1_achievement_1": "Key quantifiable win...",
-      "exp1_achievement_2": "Another key win..."
+      "exp1_bullet_1": "Job 2 Bullet 1...",
+      "exp1_bullet_2": "Job 2 Bullet 2...",
+      "exp1_bullet_3": "Job 2 Bullet 3...",
+      "exp1_bullet_4": "Job 2 Bullet 4...",
+      "exp1_bullet_5": "Job 2 Bullet 5...",
+      "exp1_achievement_1": "Key Win...",
+
+      "exp3_bullet_1": "Job 3 Bullet 1 (If exists, else empty)...",
+      "exp3_bullet_2": "Job 3 Bullet 2...",
+      "exp3_bullet_3": "Job 3 Bullet 3...",
+      "exp3_bullet_4": "Job 3 Bullet 4...",
+      "exp3_bullet_5": "Job 3 Bullet 5...",
+      "exp3_achievement_1": "Key Win...",
+
+      "exp4_bullet_1": "Job 4 Bullet 1 (If exists, else empty)...",
+      "exp4_bullet_2": "...",
+      "exp4_bullet_3": "...",
+      "exp4_bullet_4": "...",
+      "exp4_bullet_5": "...",
+      
+      "exp5_bullet_1": "Job 5 Bullet 1 (If exists, else empty)...",
+      "exp5_bullet_2": "...",
+      "exp5_bullet_3": "...",
+      "exp5_bullet_4": "...",
+      "exp5_bullet_5": "..."
   }
 }
 
