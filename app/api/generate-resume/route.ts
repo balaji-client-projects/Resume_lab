@@ -82,6 +82,7 @@ REQUIRED JSON OUTPUT FORMAT (Strict Keys):
       "exp2_bullet_4": "Job 1 Bullet 4...",
       "exp2_bullet_5": "Job 1 Bullet 5...",
       "exp2_achievement_1": "Key Win...",
+      "exp2_achievement_2": "Key Win...",
 
       "exp1_bullet_1": "Job 2 Bullet 1...",
       "exp1_bullet_2": "Job 2 Bullet 2...",
@@ -89,6 +90,7 @@ REQUIRED JSON OUTPUT FORMAT (Strict Keys):
       "exp1_bullet_4": "Job 2 Bullet 4...",
       "exp1_bullet_5": "Job 2 Bullet 5...",
       "exp1_achievement_1": "Key Win...",
+      "exp1_achievement_2": "Key Win...",
 
       "exp3_bullet_1": "Job 3 Bullet 1 (If exists, else empty)...",
       "exp3_bullet_2": "Job 3 Bullet 2...",
@@ -96,18 +98,23 @@ REQUIRED JSON OUTPUT FORMAT (Strict Keys):
       "exp3_bullet_4": "Job 3 Bullet 4...",
       "exp3_bullet_5": "Job 3 Bullet 5...",
       "exp3_achievement_1": "Key Win...",
+      "exp3_achievement_2": "Key Win...",
 
       "exp4_bullet_1": "Job 4 Bullet 1 (If exists, else empty)...",
       "exp4_bullet_2": "...",
       "exp4_bullet_3": "...",
       "exp4_bullet_4": "...",
       "exp4_bullet_5": "...",
+      "exp4_achievement_1": "Key Win...",
+      "exp4_achievement_2": "Key Win...",
       
       "exp5_bullet_1": "Job 5 Bullet 1 (If exists, else empty)...",
       "exp5_bullet_2": "...",
       "exp5_bullet_3": "...",
       "exp5_bullet_4": "...",
-      "exp5_bullet_5": "..."
+      "exp5_bullet_5": "...",
+      "exp5_achievement_1": "Key Win...",
+      "exp5_achievement_2": "Key Win..."
   }
 }
 
