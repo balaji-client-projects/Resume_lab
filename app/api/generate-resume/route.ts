@@ -79,7 +79,7 @@ REQUIRED JSON OUTPUT FORMAT:
 Respond ONLY with valid JSON.`;
 
         // FIXED: Single Model Implementation (Gemini 1.5 Flash)
-        const MODEL_NAME = "gemini-1.5-flash"; // Correct stable name (No '-latest')
+        const MODEL_NAME = "gemini-1.5-flash-001"; // Correct stable name (No '-latest')
         const API_VERSION = "v1beta"; // Required for JSON Mode & 1.5 Models
         const API_KEY = process.env.GEMINI_API_KEY;
         const URL = `https://generativelanguage.googleapis.com/${API_VERSION}/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
