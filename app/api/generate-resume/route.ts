@@ -57,11 +57,13 @@ ${resumeText.substring(0, 10000)}
 RESUME FILE NAME: ${file.name}
 
 CRITICAL RULES:
-- **WRITING STYLE**: Use a "Humanoid" professional tone. Avoid robotic. Use varied, impactful action verbs.
-- **KEYWORD OPTIMIZATION**: Aggressively integrate keywords from the Job Description.
+- **SCORING REALITY**: Be **CONSERVATIVE/PESSIMISTIC** with your score. Real ATS scanners (like Jobscan) are brutal. If you predict 95%, the real score is likely 85%. Therefore, **Calculate the score strictly**, enabling penalties for any minor keyword mismatch. Aim for a score that aligns with a "Strict Parser".
+- **WRITING STYLE**: Use a "Humanoid" professional tone. The content must sound like it was written by a skilled human professional, not an AI. Avoid robotic phrasing, repetitive structures, or generic fluff.
+- **NO DIRECT COPYING**: DO NOT copy points directly from the Job Description. You must SYNTHESIZE the Job Description requirements with the Resume's existing experience. The goal is to show *how* the candidate meets the requirement, not just state the requirement.
+- **KEYWORD OPTIMIZATION**: Aggressively integrate keywords from the Job Description to ensure a high ATS score, but weave them NATURALLY into the achievements.
 - **HIGHLIGHTING**: Emphasize critical keywords by using **Title Case** (e.g. "Strategic Planning" instead of "strategic planning"). DO NOT use markdown like ** or __. Plain text only.
 - **MATCH SCORE TARGET**: The generated content MUST be optimized to achieve an ATS Score of **85% to 95%**.
-- **MANDATORY COMPLETENESS**: The template ALWAYS has 6 bullet points for ALL jobs (exp1, exp2, exp3, exp4, exp5). You MUST generate 6 distinct, strong bullet points for EVERY job found in the resume. If the extracted resume is short, YOU MUST INFER/EXPAND based on the Job Title to fill all 6. Do NOT return empty strings for the 6th bullet if the job exists.
+- **MANDATORY COMPLETENESS**: The template ALWAYS has 6 bullet points for ALL jobs (exp1 to exp5). You MUST generate 6 distinct, strong, and specific bullet points for EVERY job found in the resume. If simple extraction isn't enough, INFER relevant skills and achievements that would be expected for that role and align them with the Job Description.
 - "exp2" refers to the MOST RECENT job. "exp1" refers to the PREVIOUS job. "exp3", "exp4", "exp5" follow in reverse chronological order.
 
 REQUIRED JSON OUTPUT FORMAT (Strict Keys):
