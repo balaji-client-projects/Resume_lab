@@ -57,9 +57,12 @@ ${resumeText.substring(0, 10000)}
 RESUME FILE NAME: ${file.name}
 
 CRITICAL RULES:
-- If you have no good content for a placeholder, return an empty string "" (DO NOT return null or undefined).
-- Each bullet point must be a strong, action-oriented sentence using keywords from the JD.
-- "exp2" refers to the MOST RECENT job. "exp1" refers to the PREVIOUS job.
+- **WRITING STYLE**: Use a "Humanoid" professional tone. Avoid robotic. Use varied, impactful action verbs.
+- **KEYWORD OPTIMIZATION**: Aggressively integrate keywords from the Job Description.
+- **HIGHLIGHTING**: Emphasize critical keywords by using **Title Case** (e.g. "Strategic Planning" instead of "strategic planning"). DO NOT use markdown like ** or __. Plain text only.
+- **MATCH SCORE TARGET**: The generated content MUST be optimized to achieve an ATS Score of **85% to 95%**.
+- **MANDATORY COMPLETENESS**: The template ALWAYS has 6 bullet points for ALL jobs (exp1, exp2, exp3, exp4, exp5). You MUST generate 6 distinct, strong bullet points for EVERY job found in the resume. If the extracted resume is short, YOU MUST INFER/EXPAND based on the Job Title to fill all 6. Do NOT return empty strings for the 6th bullet if the job exists.
+- "exp2" refers to the MOST RECENT job. "exp1" refers to the PREVIOUS job. "exp3", "exp4", "exp5" follow in reverse chronological order.
 
 REQUIRED JSON OUTPUT FORMAT (Strict Keys):
 {
@@ -81,6 +84,7 @@ REQUIRED JSON OUTPUT FORMAT (Strict Keys):
       "exp2_bullet_3": "Job 1 Bullet 3...",
       "exp2_bullet_4": "Job 1 Bullet 4...",
       "exp2_bullet_5": "Job 1 Bullet 5...",
+      "exp2_bullet_6": "Job 1 Bullet 6...",
       "exp2_achievement_1": "Key Win...",
       "exp2_achievement_2": "Key Win...",
 
@@ -89,6 +93,7 @@ REQUIRED JSON OUTPUT FORMAT (Strict Keys):
       "exp1_bullet_3": "Job 2 Bullet 3...",
       "exp1_bullet_4": "Job 2 Bullet 4...",
       "exp1_bullet_5": "Job 2 Bullet 5...",
+      "exp1_bullet_6": "Job 2 Bullet 6...",
       "exp1_achievement_1": "Key Win...",
       "exp1_achievement_2": "Key Win...",
 
@@ -97,22 +102,25 @@ REQUIRED JSON OUTPUT FORMAT (Strict Keys):
       "exp3_bullet_3": "Job 3 Bullet 3...",
       "exp3_bullet_4": "Job 3 Bullet 4...",
       "exp3_bullet_5": "Job 3 Bullet 5...",
+      "exp3_bullet_6": "Job 3 Bullet 6...",
       "exp3_achievement_1": "Key Win...",
       "exp3_achievement_2": "Key Win...",
 
       "exp4_bullet_1": "Job 4 Bullet 1 (If exists, else empty)...",
-      "exp4_bullet_2": "...",
-      "exp4_bullet_3": "...",
-      "exp4_bullet_4": "...",
-      "exp4_bullet_5": "...",
+      "exp4_bullet_2": "Job 4 Bullet 2...",
+      "exp4_bullet_3": "Job 4 Bullet 3...",
+      "exp4_bullet_4": "Job 4 Bullet 4...",
+      "exp4_bullet_5": "Job 4 Bullet 5...",
+      "exp4_bullet_6": "Job 4 Bullet 6...",
       "exp4_achievement_1": "Key Win...",
       "exp4_achievement_2": "Key Win...",
       
       "exp5_bullet_1": "Job 5 Bullet 1 (If exists, else empty)...",
-      "exp5_bullet_2": "...",
-      "exp5_bullet_3": "...",
-      "exp5_bullet_4": "...",
-      "exp5_bullet_5": "...",
+      "exp5_bullet_2": "Job 5 Bullet 2...",
+      "exp5_bullet_3": "Job 5 Bullet 3...",
+      "exp5_bullet_4": "Job 5 Bullet 4...",
+      "exp5_bullet_5": "Job 5 Bullet 5...",
+      "exp5_bullet_6": "Job 5 Bullet 6...",
       "exp5_achievement_1": "Key Win...",
       "exp5_achievement_2": "Key Win..."
   }
@@ -195,14 +203,20 @@ Respond ONLY with valid JSON.`;
                 paragraphLoop: true,
                 linebreaks: true,
                 delimiters: { start: '{{', end: '}}' },
-                nullGetter: (part) => { return ""; } // IMPORTANT: Replaces {{undefined}} with empty string
+                nullGetter: (part) => { return ""; } // Replaces {{undefined}} or {{null}} with empty string
             });
 
-            // Clean replacements (remove nulls/undefined)
-            const cleanReplacements = { ...analysis.replacements };
+            // Clean replacements (remove nulls/undefined and strip markdown)
+            const cleanReplacements: Record<string, any> = { ...analysis.replacements };
             if (cleanReplacements) {
                 Object.keys(cleanReplacements).forEach(key => {
-                    if (!cleanReplacements[key]) cleanReplacements[key] = "";
+                    let val = cleanReplacements[key];
+                    if (typeof val === 'string') {
+                        // Strip markdown bold/italic/code markers if any remain
+                        val = val.replace(/\*\*/g, '').replace(/__/g, '').replace(/`/g, '');
+                        cleanReplacements[key] = val;
+                    }
+                    if (!val) cleanReplacements[key] = "";
                 });
             }
 
