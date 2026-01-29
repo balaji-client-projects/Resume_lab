@@ -292,7 +292,7 @@ export default function LoginPage() {
             {/* Bottom Indicator */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs text-muted-foreground">
                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                <span>JobFit Pro • Secure Login</span>
+                <span>ResumeLab • Secure Login</span>
             </div>
         </div>
     );
