@@ -57,12 +57,15 @@ ${resumeText.substring(0, 10000)}
 RESUME FILE NAME: ${file.name}
 
 CRITICAL RULES:
-- **SCORING REALITY**: Be **CONSERVATIVE/PESSIMISTIC** with your score. Real ATS scanners (like Jobscan) are brutal. If you predict 95%, the real score is likely 85%. Therefore, **Calculate the score strictly**, enabling penalties for any minor keyword mismatch. Aim for a score that aligns with a "Strict Parser".
-- **WRITING STYLE**: Use a "Humanoid" professional tone. The content must sound like it was written by a skilled human professional, not an AI. Avoid robotic phrasing, repetitive structures, or generic fluff.
-- **NO DIRECT COPYING**: DO NOT copy points directly from the Job Description. You must SYNTHESIZE the Job Description requirements with the Resume's existing experience. The goal is to show *how* the candidate meets the requirement, not just state the requirement.
-- **KEYWORD OPTIMIZATION**: Aggressively integrate keywords from the Job Description to ensure a high ATS score, but weave them NATURALLY into the achievements.
-- **HIGHLIGHTING**: Emphasize critical keywords by using **Title Case** (e.g. "Strategic Planning" instead of "strategic planning"). DO NOT use markdown like ** or __. Plain text only.
+- **SCORING REALITY**: Be **CONSERVATIVE/PESSIMISTIC** with your score. Real ATS scanners (like Jobscan) are brutal. Aim for a score that aligns with a "Strict Parser".
+- **POWERFUL BULLET POINT STRUCTURE**: EVERY bullet point MUST follow this formula: **Action Verb + Specific Task/Skill + Result/Impact**.
+  - *Bad*: "Responsible for managing the team and writing code."
+  - *Good*: "Spearheaded a team of 5 developers to Architect a scalable microservices backend, Reducing API latency by 40%."
+- **QUANTIFICATION IS MANDATORY**: You MUST include numbers, percentages, or metrics in at least 50% of the bullet points (e.g., "Increased revenue by 20%", "Managed $50k budget", "Reduced load time by 3s"). If exact numbers aren't in the resume, estimate reasonable metrics based on the seniority and role context.
+- **DIRECT KEYWORD EVIDENCE**: Don't just list keywords. DEMONSTRATE them. If the JD asks for "Python", write "Developed automated data pipelines using **Python**..." instead of just "Used Python."
+- **HIGHLIGHTING**: Emphasize critical keywords by using **Title Case** (e.g. "Strategic Planning", "Cloud Architecture"). DO NOT use markdown like ** or __. Plain text only.
 - **MATCH SCORE TARGET**: The generated content MUST be optimized to achieve an ATS Score of **85% to 95%**.
+- **ELIMINATE FLUFF**: NEVER start with "Responsible for", "Helped with", or "Assisted in". Start with strong verbs like "Orchestrated", "Engineered", "Deployed", "Optimized".
 - **MANDATORY COMPLETENESS**: The template ALWAYS has 6 bullet points for ALL jobs (exp1 to exp5). You MUST generate 6 distinct, strong, and specific bullet points for EVERY job found in the resume. If simple extraction isn't enough, INFER relevant skills and achievements that would be expected for that role and align them with the Job Description.
 - "exp2" refers to the MOST RECENT job. "exp1" refers to the PREVIOUS job. "exp3", "exp4", "exp5" follow in reverse chronological order.
 
