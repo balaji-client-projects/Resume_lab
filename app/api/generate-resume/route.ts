@@ -56,16 +56,24 @@ ${resumeText.substring(0, 10000)}
 
 RESUME FILE NAME: ${file.name}
 
-CRITICAL RULES:
+// OLD RULES (Archived for reference)
+// - **SCORING REALITY**: Be **CONSERVATIVE/PESSIMISTIC** with your score. Real ATS scanners (like Jobscan) are brutal. Aim for a score that aligns with a "Strict Parser".
+// - **POWERFUL BULLET POINT STRUCTURE**: EVERY bullet point MUST follow this formula: **Action Verb + Specific Task/Skill + Result/Impact**.
+//   - *Bad*: "Responsible for managing the team and writing code."
+//   - *Good*: "Spearheaded a team of 5 developers to Architect a scalable microservices backend, Reducing API latency by 40%."
+// - **QUANTIFICATION IS MANDATORY**: You MUST include numbers, percentages, or metrics in at least 50% of the bullet points (e.g., "Increased revenue by 20%", "Managed $50k budget", "Reduced load time by 3s").
+// - **MATCH SCORE TARGET**: The generated content MUST be optimized to achieve an ATS Score of **85% to 95%**.
+// - **ELIMINATE FLUFF**: NEVER start with "Responsible for", "Helped with", or "Assisted in". Start with strong verbs like "Orchestrated", "Engineered", "Deployed", "Optimized".
 - **SCORING REALITY**: Be **CONSERVATIVE/PESSIMISTIC** with your score. Real ATS scanners (like Jobscan) are brutal. Aim for a score that aligns with a "Strict Parser".
-- **POWERFUL BULLET POINT STRUCTURE**: EVERY bullet point MUST follow this formula: **Action Verb + Specific Task/Skill + Result/Impact**.
+- **JD KEYWORD SATURATION (CRITICAL)**: Analyze the Job Description to extract the Top 10 Hard Skills/Keywords (e.g., "Python", "Project Management", "Agile"). You MUST weave at least one of these high-value keywords naturally into EVERY single bullet point.
+- **POWERFUL BULLET POINT STRUCTURE**: EVERY bullet point MUST follow this formula: **Action Verb + Context (using JD Keywords) + Quantifiable Result**.
   - *Bad*: "Responsible for managing the team and writing code."
-  - *Good*: "Spearheaded a team of 5 developers to Architect a scalable microservices backend, Reducing API latency by 40%."
-- **QUANTIFICATION IS MANDATORY**: You MUST include numbers, percentages, or metrics in at least 50% of the bullet points (e.g., "Increased revenue by 20%", "Managed $50k budget", "Reduced load time by 3s"). If exact numbers aren't in the resume, estimate reasonable metrics based on the seniority and role context.
-- **DIRECT KEYWORD EVIDENCE**: Don't just list keywords. DEMONSTRATE them. If the JD asks for "Python", write "Developed automated data pipelines using **Python**..." instead of just "Used Python."
+  - *Good*: "Spearheaded a cross-functional team of 5 developers to Architect a scalable **Microservices Backend**, reducing API latency by 40%."
+- **QUANTIFY EVERYTHING**: Use numbers generously. If the resume lacks metrics, estimations based on industry standards for that role seniority are allowed. (e.g., "Improved process efficiency by ~20%", "Handled 50+ daily tickets").
+- **DIRECT EVIDENCE**: Never say "Knowledge of...". Say "Leveraged [Skill] to [Action]...". Prove the skill through execution.
 - **HIGHLIGHTING**: Emphasize critical keywords by using **Title Case** (e.g. "Strategic Planning", "Cloud Architecture"). DO NOT use markdown like ** or __. Plain text only.
-- **MATCH SCORE TARGET**: The generated content MUST be optimized to achieve an ATS Score of **85% to 95%**.
-- **ELIMINATE FLUFF**: NEVER start with "Responsible for", "Helped with", or "Assisted in". Start with strong verbs like "Orchestrated", "Engineered", "Deployed", "Optimized".
+- **MATCH SCORE TARGET**: The generated content MUST be optimized to achieve an ATS Score of **90% to 98%**.
+- **ELIMINATE FLUFF**: PASSIVE LANGUAGE IS BANNED. Delete words like "Responsible for", "Helped", "Assisted", "Worked on". Use power verbs: "Orchestrated", "Engineered", "Deployed", "Revamped", "Accelerated".
 - **MANDATORY COMPLETENESS**: The template ALWAYS has 6 bullet points for ALL jobs (exp1 to exp5). You MUST generate 6 distinct, strong, and specific bullet points for EVERY job found in the resume. If simple extraction isn't enough, INFER relevant skills and achievements that would be expected for that role and align them with the Job Description.
 - "exp2" refers to the MOST RECENT job. "exp1" refers to the PREVIOUS job. "exp3", "exp4", "exp5" follow in reverse chronological order.
 
