@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
-    const router = useRouter();
+    const router = useRouter(); // Trigger redeploy
     const [formData, setFormData] = useState({
         email: "",
         password: ""
